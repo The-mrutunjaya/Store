@@ -1,199 +1,240 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>APK & PDF Store</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs & Apps Hub</title>
   <style>
     :root {
-      --bg: #ffffff;
-      --text: #222222;
-      --primary: #007b5e;
-      --accent: #1e90ff;
-    }
-    [data-theme="dark"] {
-      --bg: #111111;
-      --text: #ffffff;
-      --primary: #00ff88;
-      --accent: #00d4ff;
+      --bg-light: #f9f9f9;
+      --bg-dark: #121212;
+      --text-light: #1a1a1a;
+      --text-dark: #ffffff;
+      --accent-light: #00796b;
+      --accent-dark: #00e676;
+      --border-line: #d1d1d1;
     }
     body {
       margin: 0;
-      font-family: sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: Arial, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      transition: background 0.3s, color 0.3s;
     }
-    header, footer {
-      background: var(--primary);
-      color: white;
-      padding: 1rem;
-      text-align: center;
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
     }
-    .topnav {
+    header {
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border-line);
       display: flex;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
-      background: var(--primary);
-      color: white;
+      align-items: center;
     }
-    .settings {
-      float: right;
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .toggle-theme {
       cursor: pointer;
     }
     .container {
-      padding: 1rem;
+      padding: 20px;
     }
-    .item {
+    .toolbar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0.5rem;
-      border-bottom: 1px solid #ccc;
+      align-items: center;
+      margin-bottom: 10px;
     }
-    .item:hover {
-      background: rgba(0, 0, 0, 0.05);
+    .toolbar input {
+      padding: 6px 12px;
+      width: 60%;
+      border: 1px solid var(--border-line);
     }
-    .preview-modal {
+    .category-filter, .sort-control {
+      padding: 6px 12px;
+      border: 1px solid var(--border-line);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      border: 1px solid var(--border-line);
+      padding: 10px;
+      border-radius: 8px;
+      background: white;
+      transition: transform 0.2s;
+    }
+    body.dark .card {
+      background: #1e1e1e;
+      border-color: #333;
+    }
+    .card:hover {
+      transform: scale(1.01);
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+    .card p {
+      font-size: 13px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .buttons button {
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      background: var(--accent-light);
+      color: white;
+      border-radius: 4px;
+    }
+    body.dark .buttons button {
+      background: var(--accent-dark);
+      color: #000;
+    }
+    .modal {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
       display: none;
       justify-content: center;
       align-items: center;
     }
     .modal-content {
-      background: var(--bg);
-      padding: 2rem;
-      border-radius: 10px;
-      max-width: 90%;
-      text-align: center;
+      background: white;
+      padding: 20px;
+      max-width: 500px;
+      width: 90%;
+      border-radius: 8px;
     }
-    .search-bar, .filter-sort {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      border: none;
-      background: var(--accent);
+    body.dark .modal-content {
+      background: #1e1e1e;
       color: white;
-      border-radius: 5px;
-      cursor: pointer;
     }
-    .qr-box {
-      margin-top: 1rem;
-      border: 1px dashed var(--accent);
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: var(--accent);
-    }
-    @media (max-width: 600px) {
-      .item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    footer {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid var(--border-line);
     }
   </style>
 </head>
-<body data-theme="light">
+<body>
   <header>
-    <h1>APK & PDF Hub</h1>
+    <h1>Docs & Apps Hub</h1>
+    <div class="toggle-theme" onclick="toggleTheme()">Toggle Theme</div>
   </header>
-  <div class="topnav">
-    <span>Explore</span>
-    <span class="settings" onclick="toggleTheme()">Toggle Theme</span>
-  </div>
   <div class="container">
-    <div class="search-bar">
-      <input type="text" placeholder="Search apps or PDFs..." oninput="searchItems(this.value)" style="flex:1; padding:0.5rem" />
-    </div>
-    <div class="filter-sort">
-      <select onchange="filterCategory(this.value)">
-        <option value="">All Categories</option>
-        <option value="apk">APK</option>
+    <div class="toolbar">
+      <input type="text" placeholder="Search..." id="searchInput" onkeyup="filterCards()">
+      <select class="category-filter" onchange="filterCards()">
+        <option value="all">All Categories</option>
         <option value="pdf">PDF</option>
+        <option value="apk">APK</option>
       </select>
-      <select onchange="sortItems(this.value)">
+      <select class="sort-control" onchange="sortCards()">
         <option value="az">A-Z</option>
         <option value="za">Z-A</option>
       </select>
     </div>
-    <div id="list"></div>
+    <div class="grid" id="cardContainer">
+      <!-- Cards will be dynamically inserted -->
+    </div>
   </div>
-  <div class="preview-modal" id="previewModal" onclick="closePreview()">
+  <div class="modal" id="previewModal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <h3 id="previewTitle"></h3>
-      <p id="previewDesc"></p>
-      <div class="qr-box">[QR Code Placeholder]</div>
-      <br />
-      <button onclick="window.open(currentItem.url)">Download</button>
+      <h2 id="modalTitle"></h2>
+      <p id="modalDesc"></p>
+      <img id="modalQR" src="" alt="QR Code" style="max-width:100%">
     </div>
   </div>
   <footer>
-    <small>&copy; 2025 Docs by MJ</small>
+    DOCS BY MJ - Fast & Elegant
   </footer>
   <script>
-    const items = [
-      { name: "Bio App", type: "apk", desc: "Biotech learning app", url: "#" },
-      { name: "Genetics Notes", type: "pdf", desc: "Advanced genetics notes", url: "#" },
-      { name: "Plant DNA Sim", type: "apk", desc: "DNA animation tool", url: "#" },
-      { name: "Programming Guide", type: "pdf", desc: "C++/Python basics", url: "#" },
-    ];let currentItem = {};
+    const data = [
+      {name:'Biology Notes', desc:'PDF version of Class 12 Biology.', type:'pdf', url:'#'},
+      {name:'App Installer', desc:'Install our official app.', type:'apk', url:'#'}
+    ];const cardContainer = document.getElementById('cardContainer');
 
-function loadItems(filter = "", sort = "az") {
-  let filtered = items.filter(item =>
-    item.name.toLowerCase().includes(filter.toLowerCase())
-  );
-  if (currentCategory) {
-    filtered = filtered.filter(i => i.type === currentCategory);
-  }
-  if (sort === "az") filtered.sort((a, b) => a.name.localeCompare(b.name));
-  else filtered.sort((a, b) => b.name.localeCompare(a.name));
-
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-  filtered.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "item";
+function renderCards() {
+  cardContainer.innerHTML = '';
+  data.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.setAttribute('data-type', item.type);
+    div.setAttribute('data-name', item.name.toLowerCase());
     div.innerHTML = `
-      <div>
-        <strong>${item.name}</strong><br />
-        <small>${item.type.toUpperCase()}</small>
+      <h3>${item.name}</h3>
+      <p>${item.desc}</p>
+      <div class="buttons">
+        <button onclick="showPreview('${item.name}', '${item.desc}')">Preview</button>
+        <button onclick="window.location.href='${item.url}'">Download</button>
       </div>
-      <button onclick='showPreview(${JSON.stringify(item)})'>Preview</button>
     `;
-    list.appendChild(div);
+    cardContainer.appendChild(div);
   });
 }
 
-let currentCategory = "";
-function filterCategory(cat) {
-  currentCategory = cat;
-  loadItems(document.querySelector("input").value);
-}
-function sortItems(order) {
-  loadItems(document.querySelector("input").value, order);
-}
-function searchItems(value) {
-  loadItems(value);
-}
-function showPreview(item) {
-  currentItem = item;
-  document.getElementById("previewTitle").innerText = item.name;
-  document.getElementById("previewDesc").innerText = item.desc;
-  document.getElementById("previewModal").style.display = "flex";
-}
-function closePreview() {
-  document.getElementById("previewModal").style.display = "none";
-}
 function toggleTheme() {
-  const body = document.body;
-  const theme = body.getAttribute("data-theme") === "dark" ? "light" : "dark";
-  body.setAttribute("data-theme", theme);
+  document.body.classList.toggle('dark');
 }
 
-window.onload = () => loadItems();
+function showPreview(name, desc) {
+  document.getElementById('modalTitle').innerText = name;
+  document.getElementById('modalDesc').innerText = desc;
+  document.getElementById('modalQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(desc)}`;
+  document.getElementById('previewModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('previewModal').style.display = 'none';
+}
+
+function filterCards() {
+  const input = document.getElementById('searchInput').value.toLowerCase();
+  const type = document.querySelector('.category-filter').value;
+  document.querySelectorAll('.card').forEach(card => {
+    const matchType = type === 'all' || card.dataset.type === type;
+    const matchText = card.dataset.name.includes(input);
+    card.style.display = matchType && matchText ? 'block' : 'none';
+  });
+}
+
+function sortCards() {
+  const sortType = document.querySelector('.sort-control').value;
+  const sorted = [...data].sort((a, b) => {
+    if (sortType === 'az') return a.name.localeCompare(b.name);
+    if (sortType === 'za') return b.name.localeCompare(a.name);
+  });
+  cardContainer.innerHTML = '';
+  sorted.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.setAttribute('data-type', item.type);
+    div.setAttribute('data-name', item.name.toLowerCase());
+    div.innerHTML = `
+      <h3>${item.name}</h3>
+      <p>${item.desc}</p>
+      <div class="buttons">
+        <button onclick="showPreview('${item.name}', '${item.desc}')">Preview</button>
+        <button onclick="window.location.href='${item.url}'">Download</button>
+      </div>
+    `;
+    cardContainer.appendChild(div);
+  });
+}
+
+renderCards();
 
   </script>
 </body>
