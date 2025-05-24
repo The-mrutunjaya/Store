@@ -5,190 +5,182 @@
   <title>App & PDF Store</title>
   <style>
     :root {
-      --bg-light: #ffffff;
-      --bg-dark: #111111;
-      --text-light: #000000;
-      --text-dark: #ffffff;
-      --primary-light: #3c9d9b;
-      --primary-dark: #00ff99;
-      --accent: #888888;
-    }body {
-  margin: 0;
-  font-family: sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-light);
-  transition: all 0.3s ease-in-out;
-}
-
-.dark-mode {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: var(--primary-light);
-  color: white;
-}
-.dark-mode header {
-  background-color: var(--primary-dark);
-}
-
-.search-sort {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  flex-wrap: wrap;
-}
-
-input[type="text"], select {
-  padding: 5px;
-  font-size: 1em;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-}
-
-.item {
-  border: 1px solid var(--accent);
-  padding: 10px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.item-content {
-  flex: 1;
-}
-
-.actions button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  max-width: 500px;
-  border-radius: 10px;
-}
-
-.dark-mode .modal-content {
-  background: #222;
-  color: white;
-}
-
+      --bg: #fff;
+      --text: #222;
+      --accent: #2b7a78;
+      --card-bg: #f8f8f8;
+    }
+    [data-theme="dark"] {
+      --bg: #000;
+      --text: #fff;
+      --accent: #39ff14;
+      --card-bg: #111;
+    }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header, footer {
+      padding: 1rem;
+      background: var(--card-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .toggle {
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .container {
+      padding: 1rem;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    .card {
+      background: var(--card-bg);
+      padding: 1rem;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+    }
+    .card h3 {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+    .card small {
+      font-size: 0.8rem;
+    }
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    input, select {
+      padding: 0.4rem;
+      margin-right: 0.5rem;
+    }
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .qr {
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>App & PDF Store</h1>
-    <button onclick="toggleDarkMode()">Toggle Dark</button>
-  </header>  <section class="search-sort">
-    <input type="text" id="searchInput" placeholder="Search apps or PDFs" oninput="searchItems()">
+    <h2>Docs & APK Store</h2>
+    <div class="toggle" onclick="toggleTheme()">Toggle Dark</div>
+  </header>  <div class="container">
+    <input type="text" id="search" placeholder="Search..." oninput="filterItems()">
     <select onchange="sortItems(this.value)">
-      <option value="name">Sort by Name</option>
-      <option value="date">Sort by Date</option>
+      <option value="name">Sort: Name</option>
+      <option value="date">Sort: Date</option>
     </select>
     <select onchange="filterCategory(this.value)">
       <option value="all">All Categories</option>
-      <option value="education">Education</option>
-      <option value="tools">Tools</option>
-    </select>
-  </section>  <section class="list" id="itemList">
-    <!-- Example item -->
-    <div class="item" data-name="Biology Book" data-category="education" data-date="2024-12-01">
-      <div class="item-content">
-        <strong>Biology Book (PDF)</strong><br/>
-        Size: 12MB | Updated: 2024-12-01
-      </div>
-      <div class="actions">
-        <button onclick="showModal('Biology Book')">Preview</button>
-        <button>Download</button>
-      </div>
+      <option value="apk">APK</option>
+      <option value="pdf">PDF</option>
+    </select><div class="grid" id="itemGrid"></div>
+
+  </div>  <div class="modal" id="modal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDesc"></p>
+      <canvas id="qrCanvas" class="qr"></canvas>
     </div>
-    <div class="item" data-name="CalcPro APK" data-category="tools" data-date="2025-01-01">
-      <div class="item-content">
-        <strong>CalcPro (APK)</strong><br/>
-        Size: 6MB | Updated: 2025-01-01
-      </div>
-      <div class="actions">
-        <button onclick="showModal('CalcPro')">Preview</button>
-        <button>Download</button>
-      </div>
-    </div>
-  </section>  <div class="modal" id="previewModal">
-    <div class="modal-content">
-      <h2 id="modalTitle">Preview</h2>
-      <p>App or PDF details shown here.</p>
-      <button onclick="closeModal()">Close</button>
-    </div>
-  </div>  <script>
-    const body = document.body;
+  </div>  <footer>
+    <span>&copy; Docs by MJ</span>
+  </footer>  <script>
+    const items = [
+      { name: 'Bio Notes', type: 'pdf', size: '2MB', version: 'v1.0', link: 'https://example.com/bio.pdf', date: '2024-06-01', desc: 'Biotech Notes with diagrams.' },
+      { name: 'Genetics App', type: 'apk', size: '5MB', version: 'v2.3', link: 'https://example.com/gen.apk', date: '2024-07-15', desc: 'Genetics learning app.' },
+      // Add more entries as needed
+    ];
 
-    function toggleDarkMode() {
-      body.classList.toggle("dark-mode");
-    }
+    const grid = document.getElementById('itemGrid');
 
-    function showModal(title) {
-      document.getElementById("modalTitle").innerText = title;
-      document.getElementById("previewModal").style.display = "flex";
-    }
-
-    function closeModal() {
-      document.getElementById("previewModal").style.display = "none";
-    }
-
-    function searchItems() {
-      const search = document.getElementById("searchInput").value.toLowerCase();
-      const items = document.querySelectorAll(".item");
-      items.forEach(item => {
-        const name = item.getAttribute("data-name").toLowerCase();
-        item.style.display = name.includes(search) ? "flex" : "none";
+    function displayItems(list) {
+      grid.innerHTML = '';
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${item.name}</h3>
+          <small>Type: ${item.type.toUpperCase()} | ${item.size} | ${item.version}</small><br>
+          <small>Added: ${item.date}</small><br>
+          <button class="btn" onclick="openModal('${item.name}', '${item.desc}', '${item.link}')">Preview</button>
+          <a href="${item.link}" class="btn" target="_blank">Download</a>
+        `;
+        grid.appendChild(card);
       });
     }
 
-    function sortItems(type) {
-      const list = document.getElementById("itemList");
-      const items = Array.from(list.children);
-      items.sort((a, b) => {
-        const valA = a.getAttribute("data-" + type);
-        const valB = b.getAttribute("data-" + type);
-        return valA.localeCompare(valB);
-      });
-      list.innerHTML = "";
-      items.forEach(item => list.appendChild(item));
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === 'dark' ? '' : 'dark';
     }
 
-    function filterCategory(category) {
-      const items = document.querySelectorAll(".item");
-      items.forEach(item => {
-        const cat = item.getAttribute("data-category");
-        item.style.display = (category === "all" || cat === category) ? "flex" : "none";
-      });
+    function filterItems() {
+      const query = document.getElementById('search').value.toLowerCase();
+      const filtered = items.filter(i => i.name.toLowerCase().includes(query));
+      displayItems(filtered);
     }
+
+    function sortItems(by) {
+      const sorted = [...items].sort((a, b) => by === 'name' ? a.name.localeCompare(b.name) : new Date(b.date) - new Date(a.date));
+      displayItems(sorted);
+    }
+
+    function filterCategory(cat) {
+      if (cat === 'all') return displayItems(items);
+      const filtered = items.filter(i => i.type === cat);
+      displayItems(filtered);
+    }
+
+    function openModal(title, desc, link) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalDesc').textContent = desc;
+      document.getElementById('modal').style.display = 'flex';
+      drawQR(link);
+    }
+
+    function drawQR(link) {
+      const canvas = document.getElementById('qrCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 150;
+      canvas.height = 150;
+      ctx.clearRect(0, 0, 150, 150);
+      // Basic QR simulation (replace with real QR lib for production)
+      ctx.fillStyle = '#000';
+      for (let i = 0; i < 150; i += 15) {
+        for (let j = 0; j < 150; j += 15) {
+          if (Math.random() > 0.5) ctx.fillRect(i, j, 10, 10);
+        }
+      }
+    }
+
+    displayItems(items);
   </script></body>
 </html>
