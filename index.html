@@ -208,6 +208,71 @@
       width: 90%;
     }
   }
+
+/* View toggle buttons */
+#viewToggle button {
+  margin-left: 10px;
+  padding: 6px 12px;
+  border: 1px solid #4caf50;
+  background: none;
+  color: #4caf50;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+}
+#viewToggle button[aria-pressed="true"],
+#viewToggle button:hover {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Grid view (default) */
+main.grid-view {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+main.grid-view .app-card {
+  width: 200px;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* List view */
+main.list-view {
+  display: block;
+  padding: 1em;
+}
+main.list-view .app-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 12px auto;
+  text-align: left;
+  padding: 12px 20px;
+}
+main.list-view .app-card h3 {
+  flex: 1 1 auto;
+  margin: 0 20px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+main.list-view .app-card p {
+  flex: 0 0 140px;
+  margin: 0 20px 0 0;
+  font-size: 14px;
+  color: #555;
+}
+main.list-view .app-card button,
+main.list-view .app-card a {
+  margin: 0 10px 0 0;
+}
+
+  
   /* Theme toggle switch */
   .switch {
     position: relative;
