@@ -2,19 +2,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App & PDF Store</title>
+  <title>APK & PDF Store</title>
   <style>
     :root {
-      --bg: #fff;
-      --text: #222;
-      --accent: #2b7a78;
-      --card-bg: #f8f8f8;
+      --bg: #ffffff;
+      --text: #222222;
+      --primary: #007b5e;
+      --accent: #1e90ff;
     }
     [data-theme="dark"] {
-      --bg: #000;
-      --text: #fff;
-      --accent: #39ff14;
-      --card-bg: #111;
+      --bg: #111111;
+      --text: #ffffff;
+      --primary: #00ff88;
+      --accent: #00d4ff;
     }
     body {
       margin: 0;
@@ -23,164 +23,178 @@
       color: var(--text);
     }
     header, footer {
+      background: var(--primary);
+      color: white;
       padding: 1rem;
-      background: var(--card-bg);
+      text-align: center;
+    }
+    .topnav {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      color: white;
     }
-    .toggle {
+    .settings {
+      float: right;
       cursor: pointer;
-      font-size: 1.1rem;
     }
     .container {
       padding: 1rem;
     }
-    .grid {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
     }
-    .card {
-      background: var(--card-bg);
-      padding: 1rem;
-      border: 1px solid var(--accent);
-      border-radius: 8px;
+    .item:hover {
+      background: rgba(0, 0, 0, 0.05);
     }
-    .card h3 {
-      margin: 0.5rem 0;
-      font-size: 1rem;
-    }
-    .card small {
-      font-size: 0.8rem;
-    }
-    .btn {
-      background: var(--accent);
-      color: #fff;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    input, select {
-      padding: 0.4rem;
-      margin-right: 0.5rem;
-    }
-    .modal {
+    .preview-modal {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       display: none;
-      align-items: center;
       justify-content: center;
+      align-items: center;
     }
     .modal-content {
-      background: var(--card-bg);
-      padding: 1rem;
-      border-radius: 8px;
-      max-width: 400px;
-      width: 100%;
+      background: var(--bg);
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 90%;
+      text-align: center;
     }
-    .qr {
+    .search-bar, .filter-sort {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .qr-box {
       margin-top: 1rem;
+      border: 1px dashed var(--accent);
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    @media (max-width: 600px) {
+      .item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
-<body>
+<body data-theme="light">
   <header>
-    <h2>Docs & APK Store</h2>
-    <div class="toggle" onclick="toggleTheme()">Toggle Dark</div>
-  </header>  <div class="container">
-    <input type="text" id="search" placeholder="Search..." oninput="filterItems()">
-    <select onchange="sortItems(this.value)">
-      <option value="name">Sort: Name</option>
-      <option value="date">Sort: Date</option>
-    </select>
-    <select onchange="filterCategory(this.value)">
-      <option value="all">All Categories</option>
-      <option value="apk">APK</option>
-      <option value="pdf">PDF</option>
-    </select><div class="grid" id="itemGrid"></div>
-
-  </div>  <div class="modal" id="modal" onclick="this.style.display='none'">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <h3 id="modalTitle"></h3>
-      <p id="modalDesc"></p>
-      <canvas id="qrCanvas" class="qr"></canvas>
+    <h1>APK & PDF Hub</h1>
+  </header>
+  <div class="topnav">
+    <span>Explore</span>
+    <span class="settings" onclick="toggleTheme()">Toggle Theme</span>
+  </div>
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" placeholder="Search apps or PDFs..." oninput="searchItems(this.value)" style="flex:1; padding:0.5rem" />
     </div>
-  </div>  <footer>
-    <span>&copy; Docs by MJ</span>
-  </footer>  <script>
+    <div class="filter-sort">
+      <select onchange="filterCategory(this.value)">
+        <option value="">All Categories</option>
+        <option value="apk">APK</option>
+        <option value="pdf">PDF</option>
+      </select>
+      <select onchange="sortItems(this.value)">
+        <option value="az">A-Z</option>
+        <option value="za">Z-A</option>
+      </select>
+    </div>
+    <div id="list"></div>
+  </div>
+  <div class="preview-modal" id="previewModal" onclick="closePreview()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3 id="previewTitle"></h3>
+      <p id="previewDesc"></p>
+      <div class="qr-box">[QR Code Placeholder]</div>
+      <br />
+      <button onclick="window.open(currentItem.url)">Download</button>
+    </div>
+  </div>
+  <footer>
+    <small>&copy; 2025 Docs by MJ</small>
+  </footer>
+  <script>
     const items = [
-      { name: 'Bio Notes', type: 'pdf', size: '2MB', version: 'v1.0', link: 'https://example.com/bio.pdf', date: '2024-06-01', desc: 'Biotech Notes with diagrams.' },
-      { name: 'Genetics App', type: 'apk', size: '5MB', version: 'v2.3', link: 'https://example.com/gen.apk', date: '2024-07-15', desc: 'Genetics learning app.' },
-      // Add more entries as needed
-    ];
+      { name: "Bio App", type: "apk", desc: "Biotech learning app", url: "#" },
+      { name: "Genetics Notes", type: "pdf", desc: "Advanced genetics notes", url: "#" },
+      { name: "Plant DNA Sim", type: "apk", desc: "DNA animation tool", url: "#" },
+      { name: "Programming Guide", type: "pdf", desc: "C++/Python basics", url: "#" },
+    ];let currentItem = {};
 
-    const grid = document.getElementById('itemGrid');
+function loadItems(filter = "", sort = "az") {
+  let filtered = items.filter(item =>
+    item.name.toLowerCase().includes(filter.toLowerCase())
+  );
+  if (currentCategory) {
+    filtered = filtered.filter(i => i.type === currentCategory);
+  }
+  if (sort === "az") filtered.sort((a, b) => a.name.localeCompare(b.name));
+  else filtered.sort((a, b) => b.name.localeCompare(a.name));
 
-    function displayItems(list) {
-      grid.innerHTML = '';
-      list.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h3>${item.name}</h3>
-          <small>Type: ${item.type.toUpperCase()} | ${item.size} | ${item.version}</small><br>
-          <small>Added: ${item.date}</small><br>
-          <button class="btn" onclick="openModal('${item.name}', '${item.desc}', '${item.link}')">Preview</button>
-          <a href="${item.link}" class="btn" target="_blank">Download</a>
-        `;
-        grid.appendChild(card);
-      });
-    }
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  filtered.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div>
+        <strong>${item.name}</strong><br />
+        <small>${item.type.toUpperCase()}</small>
+      </div>
+      <button onclick='showPreview(${JSON.stringify(item)})'>Preview</button>
+    `;
+    list.appendChild(div);
+  });
+}
 
-    function toggleTheme() {
-      const html = document.documentElement;
-      html.dataset.theme = html.dataset.theme === 'dark' ? '' : 'dark';
-    }
+let currentCategory = "";
+function filterCategory(cat) {
+  currentCategory = cat;
+  loadItems(document.querySelector("input").value);
+}
+function sortItems(order) {
+  loadItems(document.querySelector("input").value, order);
+}
+function searchItems(value) {
+  loadItems(value);
+}
+function showPreview(item) {
+  currentItem = item;
+  document.getElementById("previewTitle").innerText = item.name;
+  document.getElementById("previewDesc").innerText = item.desc;
+  document.getElementById("previewModal").style.display = "flex";
+}
+function closePreview() {
+  document.getElementById("previewModal").style.display = "none";
+}
+function toggleTheme() {
+  const body = document.body;
+  const theme = body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  body.setAttribute("data-theme", theme);
+}
 
-    function filterItems() {
-      const query = document.getElementById('search').value.toLowerCase();
-      const filtered = items.filter(i => i.name.toLowerCase().includes(query));
-      displayItems(filtered);
-    }
+window.onload = () => loadItems();
 
-    function sortItems(by) {
-      const sorted = [...items].sort((a, b) => by === 'name' ? a.name.localeCompare(b.name) : new Date(b.date) - new Date(a.date));
-      displayItems(sorted);
-    }
-
-    function filterCategory(cat) {
-      if (cat === 'all') return displayItems(items);
-      const filtered = items.filter(i => i.type === cat);
-      displayItems(filtered);
-    }
-
-    function openModal(title, desc, link) {
-      document.getElementById('modalTitle').textContent = title;
-      document.getElementById('modalDesc').textContent = desc;
-      document.getElementById('modal').style.display = 'flex';
-      drawQR(link);
-    }
-
-    function drawQR(link) {
-      const canvas = document.getElementById('qrCanvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 150;
-      canvas.height = 150;
-      ctx.clearRect(0, 0, 150, 150);
-      // Basic QR simulation (replace with real QR lib for production)
-      ctx.fillStyle = '#000';
-      for (let i = 0; i < 150; i += 15) {
-        for (let j = 0; j < 150; j += 15) {
-          if (Math.random() > 0.5) ctx.fillRect(i, j, 10, 10);
-        }
-      }
-    }
-
-    displayItems(items);
-  </script></body>
+  </script>
+</body>
 </html>
