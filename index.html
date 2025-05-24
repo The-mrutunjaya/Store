@@ -316,8 +316,8 @@ main.list-view .app-card a {
   <h1>Data & Development</h1>
   <input type="text" id="search" placeholder="Search apps..." oninput="searchApps()" aria-label="Search apps" />
   <div id="viewToggle" role="group" aria-label="Toggle view">
-  <button id="gridViewBtn" aria-pressed="true" onclick="setView('grid')">Grid View</button>
-  <button id="listViewBtn" aria-pressed="false" onclick="setView('list')">List View</button>
+  <button id="gridViewBtn" aria-pressed="true" onclick="setView('grid')">Grid</button>
+  <button id="listViewBtn" aria-pressed="false" onclick="setView('list')">List</button>
   </div>
   <label class="switch" title="Toggle dark mode">
     <input type="checkbox" id="themeToggle" aria-checked="false" />
@@ -328,6 +328,9 @@ main.list-view .app-card a {
 <div id="categories" role="list" aria-label="App categories">
   <button class="active" onclick="filterCategory('All')">All</button>
   <button onclick="filterCategory('PDF')">PDF</button>
+  <button onclick="filterCategory('APK')">APK</button>
+  <button onclick="filterCategory('APK')">APK</button>
+  <button onclick="filterCategory('APK')">APK</button>
   <button onclick="filterCategory('APK')">APK</button>
 </div>
 
