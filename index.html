@@ -1,223 +1,404 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Download Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      transition: background 0.3s, color 0.3s;
-      background: #f4f4f4;
-      color: #222;
-    }
-    .dark {
-      background: #000;
-      color: #e0e0e0;
-    }
-    header, footer {
-      padding: 1em;
-      text-align: center;
-      border-bottom: 2px solid #ccc;
-    }
-    header.dark, footer.dark {
-      border-color: #333;
-    }
-    .container {
-      padding: 1em;
-      display: flex;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Docs App Store</title>
+<style>
+  /* Base */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #fff;
+    color: #111;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 14px;
+  }
+  header {
+    padding: 1em;
+    background: #f0f0f0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: normal;
+  }
+  #search {
+    flex-grow: 1;
+    min-width: 150px;
+    padding: 6px 10px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+  }
+  #categories {
+    padding: 0.5em 1em;
+    text-align: center;
+  }
+  #categories button {
+    margin: 5px 7px;
+    padding: 8px 18px;
+    border: 1px solid #666;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.2s;
+  }
+  #categories button:hover,
+  #categories button.active {
+    background-color: #4caf50;
+    color: white;
+    border-color: #4caf50;
+  }
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 1em;
+  }
+  .app-card {
+    border: 1px solid #ccc;
+    margin: 0;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    user-select: none;
+    border-radius: 6px;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .app-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .app-card p {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    color: #555;
+  }
+  .app-card button,
+  .app-card a {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #4caf50;
+    background: none;
+    cursor: pointer;
+    color: #4caf50;
+    font-weight: 600;
+    text-decoration: none;
+    margin: 5px 0;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .app-card button:hover,
+  .app-card a:hover {
+    background-color: #4caf50;
+    color: white;
+  }
+  .app-card a {
+    display: inline-block;
+  }
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    overflow: auto;
+  }
+  .modal-content {
+    background: #fff;
+    margin: 3% auto 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 900px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #111;
+  }
+  .modal-content iframe {
+    width: 100%;
+    height: 400px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  .close {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    float: right;
+    color: #333;
+    user-select: none;
+  }
+  .close:hover {
+    color: #d32f2f;
+  }
+  /* Dark theme */
+  body.dark {
+    background-color: #000;
+    color: #e3e8dc;
+    font-size: 13px;
+  }
+  body.dark header {
+    background-color: #111;
+    color: #e3e8dc;
+  }
+  body.dark #categories button {
+    border-color: #a2c39c;
+    color: #b6d1aa;
+    background: none;
+  }
+  body.dark #categories button:hover,
+  body.dark #categories button.active {
+    background-color: #6f9458;
+    color: #e3e8dc;
+    border-color: #6f9458;
+  }
+  body.dark .app-card {
+    background-color: #121212;
+    border-color: #3b4b32;
+    color: #e3e8dc;
+  }
+  body.dark .app-card p {
+    color: #a7b89c;
+  }
+  body.dark .app-card button,
+  body.dark .app-card a {
+    border-color: #91b68a;
+    color: #a7b89c;
+    background: none;
+  }
+  body.dark .app-card button:hover,
+  body.dark .app-card a:hover {
+    background-color: #91b68a;
+    color: #000;
+  }
+  body.dark .modal-content {
+    background-color: #222;
+    color: #dce4c6;
+    border: 1px solid #566d3e;
+  }
+  body.dark .modal-content iframe {
+    border-color: #566d3e;
+  }
+  body.dark .close {
+    color: #dce4c6;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    header {
       flex-direction: column;
-      gap: 1em;
+      align-items: stretch;
+      gap: 10px;
     }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 0.5em;
-    }
-    .card {
-      border: 2px solid #ddd;
-      padding: 1em;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      background: white;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .dark .card {
-      background: #111;
-      border-color: #444;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-    .card-title {
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-    .card-preview {
-      margin-top: 0.5em;
-      cursor: pointer;
-      color: #007acc;
-    }
-    .qr-section {
-      margin-top: 1em;
-    }
-    .btn {
-      padding: 0.5em 1em;
-      border: none;
-      border-radius: 5px;
-      background: #007acc;
-      color: white;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn:hover {
-      background: #005f99;
-    }
-    .dark .btn {
-      background: #0f0;
-      color: black;
-    }
-    .search-bar {
-      flex: 1;
-      padding: 0.5em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .dark .search-bar {
-      background: #222;
-      border-color: #555;
-      color: white;
-    }
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
+    main {
       justify-content: center;
-      align-items: center;
-      z-index: 999;
     }
-    .modal-content {
-      background: white;
-      padding: 2em;
-      border-radius: 10px;
-      max-width: 90%;
+    .app-card {
+      width: 90%;
     }
-    .dark .modal-content {
-      background: #222;
-      color: white;
-    }
-    .bottom-sheet {
-      position: fixed;
-      bottom: 0; left: 0;
-      width: 100%;
-      background: #eee;
-      padding: 1em;
-      text-align: center;
-      border-top: 2px solid #ccc;
-    }
-    .dark .bottom-sheet {
-      background: #111;
-      border-color: #333;
-    }
-    @media (min-width: 768px) {
-      .container {
-        flex-direction: row;
-        flex-wrap: wrap;
-      }
-      .card {
-        width: calc(50% - 1em);
-      }
-    }
-    @media (min-width: 1024px) {
-      .card {
-        width: calc(33.33% - 1em);
-      }
-    }
-  </style>
+  }
+  /* Theme toggle switch */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #4caf50;
+  }
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Smart Download Hub</h1>
-    <button class="btn" onclick="toggleTheme()">Toggle Dark Mode</button>
-  </header>  <div class="container">
-    <div class="controls">
-      <input type="text" class="search-bar" placeholder="Search apps or PDFs..." oninput="search(this.value)" />
-      <button class="btn" onclick="sortItems()">Sort</button>
-    </div><div id="item-list">
-  <!-- Cards inserted dynamically -->
+<header>
+  <h1>Docs App Store</h1>
+  <input type="text" id="search" placeholder="Search apps..." oninput="searchApps()" aria-label="Search apps" />
+  <label class="switch" title="Toggle dark mode">
+    <input type="checkbox" id="themeToggle" aria-checked="false" />
+    <span class="slider round"></span>
+  </label>
+</header>
+
+<div id="categories" role="list" aria-label="App categories">
+  <button class="active" onclick="filterCategory('All')">All</button>
+  <button onclick="filterCategory('PDF')">PDF</button>
+  <button onclick="filterCategory('APK')">APK</button>
 </div>
 
-  </div>  <div class="modal" id="preview-modal" onclick="this.style.display='none'">
-    <div class="modal-content">
-      <p>Preview goes here (PDF or APK info)</p>
-    </div>
-  </div>  <div class="bottom-sheet">
-    <p>© 2025 Docs by MJ | Smart Download Hub</p>
-  </div>  <script>
-    const items = [
-      { name: "App 1", type: "apk", desc: "First app", link: "#" },
-      { name: "Book 1", type: "pdf", desc: "Biotech Guide", link: "#" },
-      // Add up to 20 or more
-    ];
+<main id="appList" aria-live="polite" aria-relevant="additions"></main>
 
-    const itemList = document.getElementById('item-list');
+<!-- Modal Preview -->
+<div id="previewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="previewTitle" tabindex="-1">
+  <div class="modal-content">
+    <span class="close" role="button" aria-label="Close preview" tabindex="0" onclick="closeModal()" onkeypress="if(event.key==='Enter') closeModal()">&times;</span>
+    <h2 id="previewTitle"></h2>
+    <iframe id="previewFrame" src="" frameborder="0" title="App preview"></iframe>
+  </div>
+</div>
 
-    function loadItems() {
-      itemList.innerHTML = '';
-      items.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-title">${item.name}</div>
-          <div>${item.type.toUpperCase()} - ${item.desc}</div>
-          <div class="card-preview" onclick="showPreview('${item.name}')">Preview</div>
-          <a class="btn" href="${item.link}" download>Download</a>
-        `;
-        itemList.appendChild(card);
-      });
+<script>
+  const apps = [
+    { name: "Biology Notes", type: "PDF", url: "https://example.com/biology.pdf", preview: "https://example.com/biology.pdf" },
+    { name: "Genetics Quiz", type: "APK", url: "https://example.com/genetics.apk" },
+    { name: "Chemistry Handbook", type: "PDF", url: "https://example.com/chemistry.pdf", preview: "https://example.com/chemistry.pdf" },
+    { name: "Plant Biology App", type: "APK", url: "https://example.com/plantbio.apk" },
+    { name: "Molecular Structures", type: "PDF", url: "https://example.com/molecular.pdf", preview: "https://example.com/molecular.pdf" },
+    { name: "Bioinformatics Tools", type: "APK", url: "https://example.com/bioinfo.apk" }
+  ];
+
+  let currentCategory = "All";
+
+  const appListEl = document.getElementById('appList');
+  const previewModal = document.getElementById('previewModal');
+  const previewFrame = document.getElementById('previewFrame');
+  const previewTitle = document.getElementById('previewTitle');
+  const themeToggle = document.getElementById('themeToggle');
+  const searchInput = document.getElementById('search');
+  const categoryButtons = document.querySelectorAll('#categories button');
+
+  function renderApps() {
+    const searchText = searchInput.value.trim().toLowerCase();
+    appListEl.innerHTML = '';
+
+    const filteredApps = apps.filter(app => {
+      const matchesCategory = (currentCategory === "All") || (app.type === currentCategory);
+      const matchesSearch = app.name.toLowerCase().includes(searchText);
+      return matchesCategory && matchesSearch;
+    });
+
+    if(filteredApps.length === 0) {
+      appListEl.innerHTML = '<p>No apps found.</p>';
+      return;
     }
 
-    function search(query) {
-      const lower = query.toLowerCase();
-      const filtered = items.filter(i => i.name.toLowerCase().includes(lower));
-      itemList.innerHTML = '';
-      filtered.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-title">${item.name}</div>
-          <div>${item.type.toUpperCase()} - ${item.desc}</div>
-          <div class="card-preview" onclick="showPreview('${item.name}')">Preview</div>
-          <a class="btn" href="${item.link}" download>Download</a>
-        `;
-        itemList.appendChild(card);
-      });
-    }
+    filteredApps.forEach(app => {
+      const card = document.createElement('div');
+      card.className = 'app-card';
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'article');
+      card.setAttribute('aria-label', `${app.name}, type ${app.type}`);
 
-    function sortItems() {
-      items.sort((a, b) => a.name.localeCompare(b.name));
-      loadItems();
-    }
+      const title = document.createElement('h3');
+      title.textContent = app.name;
 
-    function showPreview(name) {
-      const modal = document.getElementById('preview-modal');
-      modal.querySelector('.modal-content').innerHTML = `<p>Preview of ${name}</p>`;
-      modal.style.display = 'flex';
-    }
+      const desc = document.createElement('p');
+      desc.textContent = `Type: ${app.type}`;
 
-    function toggleTheme() {
-      document.body.classList.toggle('dark');
-      document.querySelector('header').classList.toggle('dark');
-      document.querySelector('footer')?.classList.toggle('dark');
-      document.querySelector('.bottom-sheet').classList.toggle('dark');
-    }
+      card.appendChild(title);
+      card.appendChild(desc);
 
-    loadItems();
-  </script></body>
+      if(app.preview) {
+        const previewBtn = document.createElement('button');
+        previewBtn.textContent = 'Preview';
+        previewBtn.onclick = () => openModal(app);
+        card.appendChild(previewBtn);
+      }
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = app.url;
+      downloadLink.target = '_blank';
+      downloadLink.rel = 'noopener noreferrer';
+      downloadLink.textContent = 'Download';
+      card.appendChild(downloadLink);
+
+      appListEl.appendChild(card);
+    });
+  }
+
+  function filterCategory(category) {
+    currentCategory = category;
+
+    categoryButtons.forEach(btn => {
+      if(btn.textContent === category) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      }
+    });
+
+    renderApps();
+  }
+
+  function searchApps() {
+    renderApps();
+  }
+
+  function openModal(app) {
+    previewTitle.textContent = app.name + " Preview";
+    previewFrame.src = app.preview;
+    previewModal.style.display = 'block';
+    previewModal.focus();
+  }
+
+  function closeModal() {
+    previewModal.style.display = 'none';
+    previewFrame.src = '';
+  }
+
+  // Close modal when clicking outside content
+  previewModal.onclick = function(e) {
+    if (e.target === previewModal) closeModal();
+  };
+
+  // Keyboard support for modal close
+  document.addEventListener('keydown', (e) => {
+    if(e.key === "Escape" && previewModal.style.display === 'block') {
+      closeModal();
+    }
+  });
+
+  // Theme toggle
+  themeToggle.addEventListener('change', () => {
+    if(themeToggle.checked) {
+      document.body.classList.add('dark');
+      themeToggle.setAttribute('aria-checked', 'true');
+    } else {
+      document.body.classList.remove('dark');
+      themeToggle.setAttribute('aria-checked', 'false');
+    }
+  });
+
+  // Initialize
+  filterCategory('All');
+</script>
+</body>
 </html>
