@@ -455,6 +455,28 @@ main.list-view .app-card a {
     }
   });
 
+
+let currentView = 'grid'; // default
+
+const gridViewBtn = document.getElementById('gridViewBtn');
+const listViewBtn = document.getElementById('listViewBtn');
+
+function setView(view) {
+  currentView = view;
+  if(view === 'grid') {
+    appListEl.classList.remove('list-view');
+    appListEl.classList.add('grid-view');
+    gridViewBtn.setAttribute('aria-pressed', 'true');
+    listViewBtn.setAttribute('aria-pressed', 'false');
+  } else {
+    appListEl.classList.remove('grid-view');
+    appListEl.classList.add('list-view');
+    gridViewBtn.setAttribute('aria-pressed', 'false');
+    listViewBtn.setAttribute('aria-pressed', 'true');
+  }
+  renderApps();
+}
+  
   // Theme toggle
   themeToggle.addEventListener('change', () => {
     if(themeToggle.checked) {
