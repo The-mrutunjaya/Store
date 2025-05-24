@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Showcase</title>
+  <style>
+    :root {
+      --bg-color: #0a0a0a;
+      --text-color: #e0ffe0;
+      --card-bg: #1a1a1a;
+      --highlight: #39ff14;
+      --button-bg: #1f1f1f;
+      --border-color: #39ff14;
+    }body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+header {
+  background: #111;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+header h1 {
+  color: var(--highlight);
+  margin: 0;
+}
+
+.search-filter {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.search-filter input, select, button {
+  padding: 0.5rem;
+  background: var(--button-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 5px;
+}
+
+.view-toggle button {
+  cursor: pointer;
+}
+
+.app-container {
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.grid-view {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.list-view {
+  grid-template-columns: 1fr;
+}
+
+.app-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: transform 0.3s;
+}
+
+.app-card:hover {
+  transform: scale(1.02);
+}
+
+.app-title {
+  font-size: 1.3rem;
+  color: var(--highlight);
+  margin-bottom: 0.5rem;
+}
+
+.app-details {
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+.app-link {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: var(--highlight);
+  color: #000;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #111;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+}
+
+.modal-close {
+  float: right;
+  cursor: pointer;
+  color: var(--highlight);
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>App Store View</h1>
+    <div class="search-filter">
+      <input type="text" id="searchInput" placeholder="Search apps...">
+      <select id="categoryFilter">
+        <option value="all">All Categories</option>
+        <option value="tools">Tools</option>
+        <option value="games">Games</option>
+        <option value="education">Education</option>
+      </select>
+      <div class="view-toggle">
+        <button onclick="setView('grid')">Grid View</button>
+        <button onclick="setView('list')">List View</button>
+      </div>
+    </div>
+  </header>  <div class="app-container grid-view" id="appContainer">
+    <!-- App Cards -->
+  </div>  <div class="modal" id="appModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>  <script>
+    const appData = [
+      {
+        title: "Bio Toolkit",
+        description: "Useful tools for biotechnology analysis.",
+        category: "tools",
+        link: "#"
+      },
+      {
+        title: "Genetic Quiz",
+        description: "Fun way to learn genetics.",
+        category: "education",
+        link: "#"
+      },
+      {
+        title: "Lab Escape",
+        description: "Puzzle game based on a biotech lab.",
+        category: "games",
+        link: "#"
+      }
+    ];
+
+    const container = document.getElementById('appContainer');
+
+    function renderApps(view = 'grid') {
+      container.className = `app-container ${view}-view`;
+      const filter = document.getElementById('categoryFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      const filteredApps = appData.filter(app =>
+        (filter === 'all' || app.category === filter) &&
+        app.title.toLowerCase().includes(search)
+      );
+
+      container.innerHTML = filteredApps.map(app => `
+        <div class="app-card" onclick="showModal('${app.title}', '${app.description}', '${app.link}')">
+          <div class="app-title">${app.title}</div>
+          <div class="app-details">${app.description}</div>
+          <a href="${app.link}" class="app-link" onclick="event.stopPropagation();">Access</a>
+        </div>
+      `).join('');
+    }
+
+    function setView(view) {
+      renderApps(view);
+    }
+
+    document.getElementById('searchInput').addEventListener('input', () => renderApps());
+    document.getElementById('categoryFilter').addEventListener('change', () => renderApps());
+
+    function showModal(title, description, link) {
+      document.getElementById('modalContent').innerHTML = `
+        <h2>${title}</h2>
+        <p>${description}</p>
+        <a href="${link}" class="app-link">Open App</a>
+      `;
+      document.getElementById('appModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('appModal').style.display = 'none';
+    }
+
+    renderApps();
+  </script></body>
+</html>
