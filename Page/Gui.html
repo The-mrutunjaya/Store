@@ -1,0 +1,276 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs App Store</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      background-color: #fff;
+      color: #111;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 14px;
+    }
+    header {
+      padding: 1em;
+      background: #f0f0f0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: normal;
+    }
+    #search {
+      flex-grow: 1;
+      min-width: 150px;
+      padding: 6px 10px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    #categories {
+      padding: 0.5em 1em;
+      text-align: center;
+    }
+    #categories button {
+      margin: 5px;
+      padding: 8px 18px;
+      border: 1px solid #666;
+      background: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+    }
+    #categories button:hover,
+    #categories button.active {
+      background-color: #4caf50;
+      color: #fff;
+      border-color: #4caf50;
+    }
+    main.grid-view,
+    main.list-view {
+      padding: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+    main.list-view {
+      flex-direction: column;
+      align-items: center;
+    }
+    .app-card {
+      border: 1px solid #ccc;
+      background-color: #fafafa;
+      border-radius: 6px;
+      padding: 15px;
+      width: 200px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    main.list-view .app-card {
+      flex-direction: row;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 700px;
+      padding: 12px 20px;
+    }
+    .app-card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    main.list-view .app-card h3 {
+      margin: 0;
+    }
+    .app-card p {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 12px;
+    }
+    main.list-view .app-card p {
+      margin: 0 20px;
+      flex: 1;
+    }
+    .app-card a,
+    .app-card button {
+      padding: 8px 12px;
+      margin: 5px 0;
+      text-decoration: none;
+      border: 1px solid #4caf50;
+      border-radius: 4px;
+      background: none;
+      color: #4caf50;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .app-card a:hover,
+    .app-card button:hover {
+      background-color: #4caf50;
+      color: white;
+    }
+    .switch {
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      position: relative;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 800px;
+      border-radius: 8px;
+    }
+    .modal-content iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+    }
+    .close {
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: red;
+    }
+    #viewToggle button {
+      margin-left: 10px;
+      padding: 6px 12px;
+      border: 1px solid #4caf50;
+      background: none;
+      color: #4caf50;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    #viewToggle button[aria-pressed="true"],
+    #viewToggle button:hover {
+      background-color: #4caf50;
+      color: white;
+    }
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .app-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Docs App Store</h1>
+    <input type="text" id="search" placeholder="Search apps..." oninput="searchApps()" />
+    <div id="viewToggle">
+      <button id="gridViewBtn" aria-pressed="true" onclick="setView('grid')">Grid</button>
+      <button id="listViewBtn" aria-pressed="false" onclick="setView('list')">List</button>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider"></span>
+    </label>
+  </header>
+  <div id="categories">
+    <button class="active" onclick="filterCategory('All')">All</button>
+    <button onclick="filterCategory('PDF')">PDF</button>
+    <button onclick="filterCategory('APK')">APK</button>
+  </div>
+  <main id="appList" class="grid-view"></main>
+  <div id="previewModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <iframe id="modalFrame" src=""></iframe>
+    </div>
+  </div>
+  <script>
+    const appList = document.getElementById("appList");
+    const themeToggle = document.getElementById("themeToggle");
+    const modal = document.getElementById("previewModal");
+    const modalFrame = document.getElementById("modalFrame");themeToggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark");
+});
+
+function searchApps() {
+  // Implement app search filter here
+}
+
+function filterCategory(category) {
+  // Implement category filtering here
+}
+
+function setView(view) {
+  document.getElementById("gridViewBtn").setAttribute("aria-pressed", view === "grid");
+  document.getElementById("listViewBtn").setAttribute("aria-pressed", view === "list");
+  appList.className = view + "-view";
+}
+
+function openModal(url) {
+  modal.style.display = "block";
+  modalFrame.src = url;
+}
+
+function closeModal() {
+  modal.style.display = "none";
+  modalFrame.src = "";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) closeModal();
+};
+
+  </script>
+</body>
+</html>
