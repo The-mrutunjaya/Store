@@ -1,4 +1,4 @@
-<!-- App Store Template Updated Version --><!DOCTYPE html><html lang="en">
+<!-- App Store Template with Modal Preview and Enhanced Functions --><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -86,10 +86,43 @@ input[type="search"] {
   margin-top: 0.5rem;
   font-size: 0.9rem;
   color: var(--light-accent);
+  cursor: pointer;
 }
 
 .dark-mode .preview {
   color: var(--dark-accent);
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+.dark-mode .modal-content {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.modal-close {
+  float: right;
+  cursor: pointer;
+  font-size: 1.2rem;
 }
 
   </style>
@@ -112,13 +145,18 @@ input[type="search"] {
       <option value="date">Sort by Date</option>
     </select>
   </div>  <div class="app-list" id="appList">
-    <!-- Apps will be injected by JavaScript -->
+    <!-- Apps injected via JavaScript -->
+  </div>  <div class="modal" id="previewModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
   </div>  <script>
     const apps = [
-      { name: 'App One', category: 'education', type: 'pdf', preview: 'Preview of App One', date: '2025-05-10' },
-      { name: 'App Two', category: 'games', type: 'apk', preview: 'Preview of App Two', date: '2025-05-15' },
-      { name: 'App Three', category: 'productivity', type: 'pdf', preview: 'Preview of App Three', date: '2025-05-20' },
-      // Add up to 20 apps here as needed
+      { name: 'App One', category: 'education', type: 'pdf', preview: 'PDF file with biotechnology concepts.', date: '2025-05-10' },
+      { name: 'App Two', category: 'games', type: 'apk', preview: 'Fun and engaging quiz game.', date: '2025-05-15' },
+      { name: 'App Three', category: 'productivity', type: 'pdf', preview: 'Planner PDF for students.', date: '2025-05-20' },
+      // Add more apps here up to 20
     ];
 
     function toggleDarkMode() {
@@ -129,6 +167,7 @@ input[type="search"] {
       const search = document.getElementById('searchInput').value.toLowerCase();
       const category = document.getElementById('categorySelect').value;
       const sort = document.getElementById('sortSelect').value;
+
       let filtered = apps.filter(app =>
         (category === 'all' || app.category === category) &&
         app.name.toLowerCase().includes(search)
@@ -152,11 +191,20 @@ input[type="search"] {
         card.innerHTML = `
           <h3>${app.name}</h3>
           <p>Category: ${app.category}</p>
-          <p class="preview">${app.preview}</p>
+          <p class="preview" onclick="showModal('${app.name}', '${app.preview}')">View Preview</p>
           <a href="#">Download ${app.type.toUpperCase()}</a>
         `;
         appList.appendChild(card);
       });
+    }
+
+    function showModal(title, content) {
+      document.getElementById('modalBody').innerHTML = `<h3>${title}</h3><p>${content}</p>`;
+      document.getElementById('previewModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('previewModal').style.display = 'none';
     }
 
     filterApps();
