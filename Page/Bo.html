@@ -1,188 +1,167 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Docs & APK Viewer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Center</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
-    :root {
-      --primary: #0f9d58;
-      --background: #fff;
-      --text: #000;
-      --modal-bg: rgba(0, 0, 0, 0.8);
-    }
-    body.dark {
-      --background: #121212;
-      --text: #f0f0f0;
-      --modal-bg: rgba(255, 255, 255, 0.1);
-    }
     body {
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background: var(--background);
-      color: var(--text);
-      font-family: sans-serif;
+      background-color: #f9f9f9;
+      color: #222;
+    }
+    .dark-mode {
+      background-color: #111;
+      color: #eee;
     }
     header, footer {
-      padding: 1rem;
-      text-align: center;
-    }
-    .controls, .views {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      padding: 1rem;
-    }
-    .btn, button {
-      background: var(--primary);
+      background: #222;
       color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    .card {
-      border: 1px solid #ccc;
-      margin: 1rem;
       padding: 1rem;
-      border-radius: 6px;
-      background: #f9f9f9;
     }
-    .grid .card {
-      width: calc(33.33% - 2rem);
+    .dark-mode header, .dark-mode footer {
+      background: #000;
+    }
+    .app-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background-color: white;
+    }
+    .dark-mode .app-card {
+      background-color: #222;
+      border-color: #444;
+    }
+    .grid-view .app-card {
+      width: calc(50% - 1rem);
       display: inline-block;
+      margin-right: 1rem;
       vertical-align: top;
     }
-    .list .card {
-      width: calc(100% - 2rem);
+    .list-view .app-card {
+      width: 100%;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: var(--modal-bg);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+    .preview-modal {
+      max-width: 700px;
     }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: var(--background);
-      padding: 2rem;
-      width: 80%;
-      height: 80%;
-      overflow: auto;
-      border-radius: 10px;
-      position: relative;
-    }
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
+    .nav-toggle, .view-toggle {
       cursor: pointer;
-    }
-    iframe {
-      width: 100%;
-      height: 500px;
-    }
-    progress {
-      width: 100%;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Docs & APK Viewer</h1>
-    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-  </header>
-  <div class="controls">
-    <input type="text" id="search" placeholder="Search..." oninput="filterItems()" />
-    <select id="sort" onchange="filterItems()">
-      <option value="name">Name</option>
-      <option value="type">Type</option>
-    </select>
-    <button onclick="setView('list')">List View</button>
-    <button onclick="setView('grid')">Grid View</button>
-  </div>
-  <main id="items" class="list"></main>  <div class="modal" id="previewModal">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeModal()">&times;</span>
-      <h2 id="previewTitle"></h2>
-      <div id="previewBody"></div>
-      <progress id="downloadProgress" value="0" max="100" style="display:none;"></progress>
+  <header class="d-flex justify-content-between align-items-center">
+    <div><i class="bi bi-qr-code-scan"></i> Download Center</div>
+    <div>
+      <button class="btn btn-sm btn-outline-light" id="themeToggle">Dark Mode</button>
     </div>
-  </div>  <script>
-    const itemsData = [
-      { id: 1, name: "Genetics Notes", type: "pdf", url: "https://example.com/genetics.pdf" },
-      { id: 2, name: "DNA Tool", type: "apk", url: "https://example.com/dna-tool.apk" },
-      // more items...
-    ];
-    let currentView = 'list';
+  </header>  <nav class="p-2 border-bottom d-flex justify-content-between">
+    <div>
+      <input type="text" id="search" class="form-control" placeholder="Search apps or PDFs">
+    </div>
+    <div>
+      <select id="categoryFilter" class="form-select">
+        <option value="all">All Categories</option>
+        <option value="pdf">PDF</option>
+        <option value="apk">APK</option>
+      </select>
+    </div>
+    <div>
+      <button id="toggleView" class="btn btn-outline-secondary view-toggle">Grid</button>
+    </div>
+  </nav>  <main class="container py-3 list-view" id="appContainer">
+    <!-- Example Card -->
+    <div class="app-card" data-type="apk" data-name="Sample App">
+      <h5>Sample App</h5>
+      <p>Category: APK</p>
+      <button class="btn btn-primary preview-btn" data-file="sample.apk">Preview & Download</button>
+    </div>
+    <div class="app-card" data-type="pdf" data-name="Sample PDF">
+      <h5>Sample PDF</h5>
+      <p>Category: PDF</p>
+      <button class="btn btn-primary preview-btn" data-file="sample.pdf">Preview & Download</button>
+    </div>
+  </main>  <footer class="text-center">DOCS BY MJ</footer>  <!-- Modal -->  <div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered preview-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <iframe src="" width="100%" height="400px" id="previewFrame"></iframe>
+          <div class="progress mt-3">
+            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%">0%</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" id="downloadLink" download>Download</a>
+        </div>
+      </div>
+    </div>
+  </div>  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>  <script>
+    const toggleBtn = document.getElementById('themeToggle');
+    const body = document.body;
+    const appContainer = document.getElementById('appContainer');
+    const toggleViewBtn = document.getElementById('toggleView');
+    const search = document.getElementById('search');
+    const categoryFilter = document.getElementById('categoryFilter');
 
-    function renderItems(data) {
-      const container = document.getElementById('items');
-      container.className = currentView;
-      container.innerHTML = '';
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `<h3>${item.name}</h3><p>${item.type.toUpperCase()}</p>
-        <button onclick='openModal(${JSON.stringify(item)})'>Preview</button>
-        <button onclick='startDownload(${JSON.stringify(item)})'>Download</button>`;
-        container.appendChild(card);
+    toggleBtn.onclick = () => {
+      body.classList.toggle('dark-mode');
+    };
+
+    toggleViewBtn.onclick = () => {
+      if (appContainer.classList.contains('list-view')) {
+        appContainer.classList.remove('list-view');
+        appContainer.classList.add('grid-view');
+        toggleViewBtn.textContent = 'List';
+      } else {
+        appContainer.classList.remove('grid-view');
+        appContainer.classList.add('list-view');
+        toggleViewBtn.textContent = 'Grid';
+      }
+    };
+
+    document.querySelectorAll('.preview-btn').forEach(btn => {
+      btn.onclick = () => {
+        const file = btn.dataset.file;
+        const iframe = document.getElementById('previewFrame');
+        iframe.src = file.endsWith('.pdf') ? file : 'https://via.placeholder.com/400x300.png?text=APK+Preview';
+        const progress = document.getElementById('progressBar');
+        progress.style.width = '0%';
+        progress.textContent = '0%';
+        let percent = 0;
+        const interval = setInterval(() => {
+          if (percent >= 100) {
+            clearInterval(interval);
+          } else {
+            percent += 10;
+            progress.style.width = percent + '%';
+            progress.textContent = percent + '%';
+          }
+        }, 200);
+        document.getElementById('downloadLink').href = file;
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        modal.show();
+      };
+    });
+
+    search.addEventListener('input', () => {
+      const keyword = search.value.toLowerCase();
+      document.querySelectorAll('.app-card').forEach(card => {
+        card.style.display = card.dataset.name.toLowerCase().includes(keyword) ? '' : 'none';
       });
-    }
+    });
 
-    function filterItems() {
-      const search = document.getElementById('search').value.toLowerCase();
-      const sort = document.getElementById('sort').value;
-      let filtered = itemsData.filter(i => i.name.toLowerCase().includes(search));
-      if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
-      if (sort === 'type') filtered.sort((a, b) => a.type.localeCompare(b.type));
-      renderItems(filtered);
-    }
-
-    function setView(view) {
-      currentView = view;
-      filterItems();
-    }
-
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark');
-    }
-
-    function openModal(item) {
-      document.getElementById('previewModal').classList.add('active');
-      document.getElementById('previewTitle').innerText = item.name;
-      const body = document.getElementById('previewBody');
-      body.innerHTML = item.type === 'pdf' ?
-        `<iframe src="${item.url}" frameborder="0"></iframe>` :
-        `<p>APK file. You can download it below.</p>`;
-    }
-
-    function closeModal() {
-      document.getElementById('previewModal').classList.remove('active');
-    }
-
-    function startDownload(item) {
-      openModal(item);
-      const progress = document.getElementById('downloadProgress');
-      progress.style.display = 'block';
-      progress.value = 0;
-      let val = 0;
-      const simulate = setInterval(() => {
-        val += 10;
-        progress.value = val;
-        if (val >= 100) {
-          clearInterval(simulate);
-          window.open(item.url, '_blank');
-          progress.style.display = 'none';
-        }
-      }, 200);
-    }
-
-    renderItems(itemsData);
+    categoryFilter.onchange = () => {
+      const value = categoryFilter.value;
+      document.querySelectorAll('.app-card').forEach(card => {
+        card.style.display = value === 'all' || card.dataset.type === value ? '' : 'none';
+      });
+    };
   </script></body>
 </html>
