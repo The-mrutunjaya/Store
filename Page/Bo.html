@@ -2,166 +2,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Download Center</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <title>App Store - Docs by MJ</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    :root {
+      --bg-light: #f9f9f9;
+      --bg-dark: #111;
+      --text-light: #333;
+      --text-dark: #f9f9f9;
+      --primary: #28a745;
+      --card-radius: 16px;
+      --transition: 0.3s ease;
+    }
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background-color: #f9f9f9;
-      color: #222;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      transition: var(--transition);
     }
-    .dark-mode {
-      background-color: #111;
-      color: #eee;
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
     }
-    header, footer {
+    header {
+      padding: 1rem;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .toggle-theme {
+      cursor: pointer;
+    }
+    .container {
+      display: flex;
+    }
+    nav {
+      width: 200px;
+      min-height: 100vh;
       background: #222;
       color: white;
       padding: 1rem;
     }
-    .dark-mode header, .dark-mode footer {
-      background: #000;
-    }
-    .app-card {
-      border: 1px solid #ccc;
-      border-radius: 10px;
+    main {
+      flex: 1;
       padding: 1rem;
+    }
+    .grid-toggle {
       margin-bottom: 1rem;
-      background-color: white;
     }
-    .dark-mode .app-card {
-      background-color: #222;
-      border-color: #444;
+    .apps {
+      display: grid;
+      gap: 1rem;
     }
-    .grid-view .app-card {
-      width: calc(50% - 1rem);
-      display: inline-block;
-      margin-right: 1rem;
-      vertical-align: top;
+    .grid .apps {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
-    .list-view .app-card {
-      width: 100%;
+    .list .apps {
+      grid-template-columns: 1fr;
     }
-    .preview-modal {
-      max-width: 700px;
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: var(--card-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: var(--transition);
     }
-    .nav-toggle, .view-toggle {
+    body.dark .card {
+      background: #222;
+      color: var(--text-dark);
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    .download-btn {
+      background: var(--primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
+    }
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #ddd;
+      margin-top: 1rem;
+    }
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.6s ease;
     }
   </style>
 </head>
 <body>
-  <header class="d-flex justify-content-between align-items-center">
-    <div><i class="bi bi-qr-code-scan"></i> Download Center</div>
-    <div>
-      <button class="btn btn-sm btn-outline-light" id="themeToggle">Dark Mode</button>
-    </div>
-  </header>  <nav class="p-2 border-bottom d-flex justify-content-between">
-    <div>
-      <input type="text" id="search" class="form-control" placeholder="Search apps or PDFs">
-    </div>
-    <div>
-      <select id="categoryFilter" class="form-select">
-        <option value="all">All Categories</option>
-        <option value="pdf">PDF</option>
-        <option value="apk">APK</option>
-      </select>
-    </div>
-    <div>
-      <button id="toggleView" class="btn btn-outline-secondary view-toggle">Grid</button>
-    </div>
-  </nav>  <main class="container py-3 list-view" id="appContainer">
-    <!-- Example Card -->
-    <div class="app-card" data-type="apk" data-name="Sample App">
-      <h5>Sample App</h5>
-      <p>Category: APK</p>
-      <button class="btn btn-primary preview-btn" data-file="sample.apk">Preview & Download</button>
-    </div>
-    <div class="app-card" data-type="pdf" data-name="Sample PDF">
-      <h5>Sample PDF</h5>
-      <p>Category: PDF</p>
-      <button class="btn btn-primary preview-btn" data-file="sample.pdf">Preview & Download</button>
-    </div>
-  </main>  <footer class="text-center">DOCS BY MJ</footer>  <!-- Modal -->  <div class="modal fade" id="previewModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered preview-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Preview</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <header>
+    <h1>Docs by MJ</h1>
+    <i class="fas fa-moon toggle-theme" onclick="toggleTheme()"></i>
+  </header>
+  <div class="container">
+    <nav>
+      <p><strong>Categories</strong></p>
+      <ul>
+        <li>Education</li>
+        <li>Utilities</li>
+        <li>Media</li>
+        <li>PDFs</li>
+        <li>APK Files</li>
+      </ul>
+    </nav>
+    <main>
+      <div class="grid-toggle">
+        <button onclick="setView('list')">List View</button>
+        <button onclick="setView('grid')">Grid View</button>
+      </div>
+      <div class="apps list">
+        <div class="card">
+          <h3>Genetics Notes PDF</h3>
+          <p>Category: Education</p>
+          <button class="download-btn" onclick="openModal('Genetics Notes PDF')">Download</button>
         </div>
-        <div class="modal-body">
-          <iframe src="" width="100%" height="400px" id="previewFrame"></iframe>
-          <div class="progress mt-3">
-            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%">0%</div>
-          </div>
+        <div class="card">
+          <h3>DNA Viewer APK</h3>
+          <p>Category: Utilities</p>
+          <button class="download-btn" onclick="openModal('DNA Viewer APK')">Download</button>
         </div>
-        <div class="modal-footer">
-          <a href="#" class="btn btn-success" id="downloadLink" download>Download</a>
-        </div>
+        <!-- More cards here -->
+      </div>
+    </main>
+  </div>  <div class="modal" id="downloadModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Downloading...</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
       </div>
     </div>
-  </div>  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>  <script>
-    const toggleBtn = document.getElementById('themeToggle');
-    const body = document.body;
-    const appContainer = document.getElementById('appContainer');
-    const toggleViewBtn = document.getElementById('toggleView');
-    const search = document.getElementById('search');
-    const categoryFilter = document.getElementById('categoryFilter');
-
-    toggleBtn.onclick = () => {
-      body.classList.toggle('dark-mode');
-    };
-
-    toggleViewBtn.onclick = () => {
-      if (appContainer.classList.contains('list-view')) {
-        appContainer.classList.remove('list-view');
-        appContainer.classList.add('grid-view');
-        toggleViewBtn.textContent = 'List';
-      } else {
-        appContainer.classList.remove('grid-view');
-        appContainer.classList.add('list-view');
-        toggleViewBtn.textContent = 'Grid';
-      }
-    };
-
-    document.querySelectorAll('.preview-btn').forEach(btn => {
-      btn.onclick = () => {
-        const file = btn.dataset.file;
-        const iframe = document.getElementById('previewFrame');
-        iframe.src = file.endsWith('.pdf') ? file : 'https://via.placeholder.com/400x300.png?text=APK+Preview';
-        const progress = document.getElementById('progressBar');
-        progress.style.width = '0%';
-        progress.textContent = '0%';
-        let percent = 0;
-        const interval = setInterval(() => {
-          if (percent >= 100) {
-            clearInterval(interval);
-          } else {
-            percent += 10;
-            progress.style.width = percent + '%';
-            progress.textContent = percent + '%';
-          }
-        }, 200);
-        document.getElementById('downloadLink').href = file;
-        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-        modal.show();
-      };
-    });
-
-    search.addEventListener('input', () => {
-      const keyword = search.value.toLowerCase();
-      document.querySelectorAll('.app-card').forEach(card => {
-        card.style.display = card.dataset.name.toLowerCase().includes(keyword) ? '' : 'none';
-      });
-    });
-
-    categoryFilter.onchange = () => {
-      const value = categoryFilter.value;
-      document.querySelectorAll('.app-card').forEach(card => {
-        card.style.display = value === 'all' || card.dataset.type === value ? '' : 'none';
-      });
-    };
+  </div>  <script>
+    const appsContainer = document.querySelector('.apps');
+    function setView(view) {
+      appsContainer.parentElement.className = view;
+    }
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+    }
+    function openModal(title) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('downloadModal').classList.add('active');
+      const fill = document.getElementById('progressFill');
+      fill.style.width = '0%';
+      setTimeout(() => fill.style.width = '100%', 100);
+      setTimeout(() => closeModal(), 2000);
+    }
+    function closeModal() {
+      document.getElementById('downloadModal').classList.remove('active');
+    }
   </script></body>
 </html>
