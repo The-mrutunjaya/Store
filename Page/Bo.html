@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs & APK Viewer</title>
+  <style>
+    :root {
+      --primary: #0f9d58;
+      --background: #fff;
+      --text: #000;
+      --modal-bg: rgba(0, 0, 0, 0.8);
+    }
+    body.dark {
+      --background: #121212;
+      --text: #f0f0f0;
+      --modal-bg: rgba(255, 255, 255, 0.1);
+    }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: sans-serif;
+    }
+    header, footer {
+      padding: 1rem;
+      text-align: center;
+    }
+    .controls, .views {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 1rem;
+    }
+    .btn, button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      margin: 1rem;
+      padding: 1rem;
+      border-radius: 6px;
+      background: #f9f9f9;
+    }
+    .grid .card {
+      width: calc(33.33% - 2rem);
+      display: inline-block;
+      vertical-align: top;
+    }
+    .list .card {
+      width: calc(100% - 2rem);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--modal-bg);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--background);
+      padding: 2rem;
+      width: 80%;
+      height: 80%;
+      overflow: auto;
+      border-radius: 10px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+    }
+    progress {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Docs & APK Viewer</h1>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+  </header>
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search..." oninput="filterItems()" />
+    <select id="sort" onchange="filterItems()">
+      <option value="name">Name</option>
+      <option value="type">Type</option>
+    </select>
+    <button onclick="setView('list')">List View</button>
+    <button onclick="setView('grid')">Grid View</button>
+  </div>
+  <main id="items" class="list"></main>  <div class="modal" id="previewModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h2 id="previewTitle"></h2>
+      <div id="previewBody"></div>
+      <progress id="downloadProgress" value="0" max="100" style="display:none;"></progress>
+    </div>
+  </div>  <script>
+    const itemsData = [
+      { id: 1, name: "Genetics Notes", type: "pdf", url: "https://example.com/genetics.pdf" },
+      { id: 2, name: "DNA Tool", type: "apk", url: "https://example.com/dna-tool.apk" },
+      // more items...
+    ];
+    let currentView = 'list';
+
+    function renderItems(data) {
+      const container = document.getElementById('items');
+      container.className = currentView;
+      container.innerHTML = '';
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${item.name}</h3><p>${item.type.toUpperCase()}</p>
+        <button onclick='openModal(${JSON.stringify(item)})'>Preview</button>
+        <button onclick='startDownload(${JSON.stringify(item)})'>Download</button>`;
+        container.appendChild(card);
+      });
+    }
+
+    function filterItems() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const sort = document.getElementById('sort').value;
+      let filtered = itemsData.filter(i => i.name.toLowerCase().includes(search));
+      if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+      if (sort === 'type') filtered.sort((a, b) => a.type.localeCompare(b.type));
+      renderItems(filtered);
+    }
+
+    function setView(view) {
+      currentView = view;
+      filterItems();
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+    }
+
+    function openModal(item) {
+      document.getElementById('previewModal').classList.add('active');
+      document.getElementById('previewTitle').innerText = item.name;
+      const body = document.getElementById('previewBody');
+      body.innerHTML = item.type === 'pdf' ?
+        `<iframe src="${item.url}" frameborder="0"></iframe>` :
+        `<p>APK file. You can download it below.</p>`;
+    }
+
+    function closeModal() {
+      document.getElementById('previewModal').classList.remove('active');
+    }
+
+    function startDownload(item) {
+      openModal(item);
+      const progress = document.getElementById('downloadProgress');
+      progress.style.display = 'block';
+      progress.value = 0;
+      let val = 0;
+      const simulate = setInterval(() => {
+        val += 10;
+        progress.value = val;
+        if (val >= 100) {
+          clearInterval(simulate);
+          window.open(item.url, '_blank');
+          progress.style.display = 'none';
+        }
+      }, 200);
+    }
+
+    renderItems(itemsData);
+  </script></body>
+</html>
