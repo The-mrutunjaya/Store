@@ -1,179 +1,567 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App & PDF Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StoreX - APK & PDF Hub</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
   <style>
     :root {
-      --bg-light: #fff;
-      --text-light: #333;
-      --primary: #2a9d8f;
-      --bg-dark: #121212;
-      --text-dark: #fff;
-      --accent: #26a69a;
-    }body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-light);
-  transition: background 0.3s, color 0.3s;
-}
+      --bg-light: #ffffff;
+      --bg-dark: #0b0b0b;
+      --text-light: #111;
+      --text-dark: #eee;
+      --primary: #0f9d58;
+      --line: #ddd;
+    }
 
-body.dark {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-header, nav, footer {
-  padding: 1rem;
-  background-color: var(--primary);
-  color: white;
-}
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      transition: all 0.3s ease-in-out;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
 
-#view-toggle {
-  cursor: pointer;
-  background: none;
-  border: 1px solid white;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
+    header,
+    footer {
+      padding: 1rem;
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+    }
 
-.container {
-  padding: 1rem;
-  display: grid;
-  gap: 1rem;
-}
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: var(--bg-light);
+      border-bottom: 1px solid var(--line);
+    }
 
-.grid-view {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
+    body.dark nav {
+      background: var(--bg-dark);
+      border-color: #333;
+    }
 
-.list-view {
-  grid-template-columns: 1fr;
-}
+    .nav-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
 
-.card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
-  background: #fafafa;
-  transition: 0.3s;
-}
+    .toggle-dark {
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: var(--primary);
+    }
 
-body.dark .card {
-  background: #1e1e1e;
-  border-color: #333;
-}
+    body.dark .toggle-dark {
+      color: #72d572;
+    }
 
-.card h3 {
-  margin: 0 0 0.5rem;
-}
+    .container {
+      padding: 1rem;
+      flex-grow: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
+    /* Controls area */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-}
+    .controls > * {
+      flex: 1 1 200px;
+    }
 
-.modal.active {
-  display: flex;
-}
+    input[type="search"],
+    select {
+      padding: 0.5rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      width: 100%;
+      background: inherit;
+      color: inherit;
+      transition: border-color 0.3s;
+    }
 
-.toggle-dark {
-  background: none;
-  border: 1px solid white;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    input[type="search"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
 
+    button {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background: #0a7d40;
+    }
+
+    /* View toggles */
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+      flex: none;
+      margin-left: auto;
+    }
+
+    .view-toggle button {
+      flex: none;
+      min-width: 80px;
+    }
+
+    .active-btn {
+      background: #072d10 !important;
+    }
+
+    /* List & Grid views */
+    .list-view,
+    .grid-view {
+      display: none;
+      gap: 1rem;
+    }
+
+    .list-view.active-view {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grid-view.active-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.5rem;
+      transition: box-shadow 0.3s;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    body.dark .card p {
+      color: #bbb;
+    }
+
+    .btns {
+      margin-top: auto;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btns button {
+      flex: 1;
+    }
+
+    /* Bottom Sheet (Modal Preview) */
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-height: 70vh;
+      background: #111;
+      color: #fff;
+      padding: 1rem;
+      display: none;
+      overflow-y: auto;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+
+    .bottom-sheet.active {
+      display: block;
+    }
+
+    .bottom-sheet header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .bottom-sheet h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Preview content area */
+    .preview-content {
+      background: #222;
+      border-radius: 6px;
+      padding: 1rem;
+      height: 50vh;
+      overflow: auto;
+    }
+
+    /* QR code placeholder */
+    .qr-code {
+      margin-top: 1rem;
+      text-align: center;
+      color: #72d572;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      nav,
+      header,
+      .container,
+      .bottom-sheet {
+        padding: 1.5rem 2rem;
+      }
+
+      .card {
+        min-height: 140px;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h2>Docs & Apps</h2>
+    <h1>StoreX</h1>
+    <p>Fast and Clean APK & PDF Download Platform</p>
+  </header>
+
+  <nav>
+    <div class="nav-title">StoreX</div>
     <div>
-      <button id="view-toggle">Toggle View</button>
-      <button class="toggle-dark" onclick="toggleDark()">Dark Mode</button>
+      <i class="fas fa-moon toggle-dark" title="Toggle Dark Mode" onclick="toggleDark()"></i>
     </div>
-  </header>  <main class="container list-view" id="item-container">
-    <!-- Items will be injected here -->
-  </main>  <div class="modal" id="previewModal">
-    <div class="modal-content">
-      <h3 id="modalTitle">Preview</h3>
-      <iframe id="modalFrame" src="" style="width:100%;height:300px;"></iframe>
-      <button onclick="closeModal()">Close</button>
+  </nav>
+
+  <main class="container">
+    <div class="controls">
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search apps or PDFs..."
+        oninput="filterItems()"
+        aria-label="Search apps or PDFs"
+      />
+      <select id="categorySelect" onchange="filterItems()" aria-label="Filter by category">
+        <option value="all">All Categories</option>
+        <option value="apk">APK</option>
+        <option value="pdf">PDF</option>
+        <option value="education">Education</option>
+        <option value="tools">Tools</option>
+      </select>
+      <select id="sortSelect" onchange="sortItems()" aria-label="Sort items">
+        <option value="name-asc">Name (A → Z)</option>
+        <option value="name-desc">Name (Z → A)</option>
+      </select>
+      <div class="view-toggle" role="group" aria-label="Toggle view">
+        <button id="btnList" class="active-btn" onclick="setView('list')">List View</button>
+        <button id="btnGrid" onclick="setView('grid')">Grid View</button>
+      </div>
     </div>
-  </div>  <script>
+
+    <section class="list-view active-view" id="listView" aria-live="polite" aria-label="List of downloads"></section>
+    <section class="grid-view" id="gridView" aria-live="polite" aria-label="Grid of downloads"></section>
+  </main>
+
+  <aside class="bottom-sheet" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+    <header>
+      <h3 id="previewTitle">Preview Title</h3>
+      <button class="close-btn" aria-label="Close preview" onclick="closePreview()">&times;</button>
+    </header>
+    <div class="preview-content" id="previewContent">
+      <!-- Dynamic preview content here -->
+    </div>
+    <div class="qr-code" id="qrCode"></div>
+  </aside>
+
+  <footer>DOCS BY MJ &copy; 2025</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const body = document.body;
+    const listView = document.getElementById("listView");
+    const gridView = document.getElementById("gridView");
+    const previewModal = document.getElementById("previewModal");
+    const previewTitle = document.getElementById("previewTitle");
+    const previewContent = document.getElementById("previewContent");
+    const qrCodeDiv = document.getElementById("qrCode");
+
+    // Sample data array with apk/pdf, category, and URL
     const items = [
-      { name: "Biotech PDF 1", type: "pdf", link: "#", preview: "https://example.com/preview1.pdf" },
-      { name: "App Installer", type: "apk", link: "#", preview: "https://example.com/app.apk" },
-      { name: "Sample Notes", type: "pdf", link: "#", preview: "https://example.com/notes.pdf" },
-      { name: "Biotech App", type: "apk", link: "#", preview: "https://example.com/biotech.apk" }
+      {
+        id: 1,
+        name: "Biotech Basics PDF",
+        type: "pdf",
+        category: "education",
+        url: "https://example.com/biotech-basics.pdf",
+        date: "2024-05-01",
+      },
+      {
+        id: 2,
+        name: "DNA Analyzer APK",
+        type: "apk",
+        category: "tools",
+        url: "https://example.com/dna-analyzer.apk",
+        date: "2024-04-22",
+      },
+      {
+        id: 3,
+        name: "Genetics PDF Guide",
+        type: "pdf",
+        category: "education",
+        url: "https://example.com/genetics-guide.pdf",
+        date: "2024-03-15",
+      },
+      {
+        id: 4,
+        name: "Molecular Tools APK",
+        type: "apk",
+        category: "tools",
+        url: "https://example.com/molecular-tools.apk",
+        date: "2024-04-30",
+      },
+      {
+        id: 5,
+        name: "Programming for Bioinformatics PDF",
+        type: "pdf",
+        category: "education",
+        url: "https://example.com/programming-bioinformatics.pdf",
+        date: "2024-04-10",
+      },
+      {
+        id: 6,
+        name: "Lab Safety APK",
+        type: "apk",
+        category: "tools",
+        url: "https://example.com/lab-safety.apk",
+        date: "2024-05-05",
+      },
+      // Add more items up to 20 as needed
     ];
 
-    const container = document.getElementById('item-container');
-    const modal = document.getElementById('previewModal');
-    const modalFrame = document.getElementById('modalFrame');
-    const modalTitle = document.getElementById('modalTitle');
+    // Keep track of current filtered and sorted items
+    let filteredItems = [...items];
+    let currentView = "list"; // default
 
-    function renderItems() {
-      container.innerHTML = '';
-      items.forEach((item, i) => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <h3>${item.name}</h3>
-          <p>Type: ${item.type.toUpperCase()}</p>
-          <button onclick="showPreview('${item.name}', '${item.preview}')">Preview</button>
-          <a href="${item.link}" target="_blank"><button>Download</button></a>
-        `;
-        container.appendChild(div);
-      });
-    }
+    // Initialize
+    window.onload = () => {
+      renderItems();
+    };
 
-    function showPreview(title, link) {
-      modal.classList.add('active');
-      modalTitle.innerText = title;
-      modalFrame.src = link;
-    }
-
-    function closeModal() {
-      modal.classList.remove('active');
-      modalFrame.src = '';
-    }
-
+    // Toggle dark mode
     function toggleDark() {
-      document.body.classList.toggle('dark');
+      body.classList.toggle("dark");
     }
 
-    document.getElementById('view-toggle').addEventListener('click', () => {
-      container.classList.toggle('grid-view');
-      container.classList.toggle('list-view');
-    });
+    // Render items in both views, show only current view
+    function renderItems() {
+      listView.innerHTML = "";
+      gridView.innerHTML = "";
 
-    renderItems();
-  </script></body>
+      filteredItems.forEach((item) => {
+        const card = createCard(item);
+
+        // Clone for grid and list views with minor differences if needed
+        const cardForList = card.cloneNode(true);
+        const cardForGrid = card.cloneNode(true);
+
+        listView.appendChild(cardForList);
+        gridView.appendChild(cardForGrid);
+      });
+
+      updateView();
+    }
+
+    // Create a card element for an item
+    function createCard(item) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "listitem");
+
+      const title = document.createElement("h3");
+      title.textContent = item.name;
+
+      const info = document.createElement("p");
+      info.textContent = `${item.type.toUpperCase()} - Category: ${capitalize(item.category)}`;
+
+      const btns = document.createElement("div");
+      btns.className = "btns";
+
+      // View/Preview Button
+      const previewBtn = document.createElement("button");
+      previewBtn.textContent = "Preview";
+      previewBtn.onclick = () => openPreview(item);
+      previewBtn.setAttribute("aria-label", `Preview ${item.name}`);
+      btns.appendChild(previewBtn);
+
+      // Download Button
+      const dlBtn = document.createElement("button");
+      dlBtn.textContent = "Download";
+      dlBtn.onclick = () => window.open(item.url, "_blank");
+      dlBtn.setAttribute("aria-label", `Download ${item.name}`);
+      btns.appendChild(dlBtn);
+
+      card.appendChild(title);
+      card.appendChild(info);
+      card.appendChild(btns);
+
+      return card;
+    }
+
+    // Capitalize first letter
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Filter items by search and category
+    function filterItems() {
+      const searchTerm = document.getElementById("searchInput").value.trim().toLowerCase();
+      const category = document.getElementById("categorySelect").value;
+
+      filteredItems = items.filter((item) => {
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = category === "all" || item.category === category || item.type === category;
+        return matchesSearch && matchesCategory;
+      });
+
+      sortItems(false);
+    }
+
+    // Sort items and then render
+    function sortItems(rerender = true) {
+      const sortOption = document.getElementById("sortSelect").value;
+      if (sortOption === "name-asc") {
+        filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sortOption === "name-desc") {
+        filteredItems.sort((a, b) => b.name.localeCompare(a.name));
+      }
+
+      if (rerender) renderItems();
+    }
+
+    // View toggle logic
+    function setView(view) {
+      currentView = view;
+      document.getElementById("btnList").classList.toggle("active-btn", view === "list");
+      document.getElementById("btnGrid").classList.toggle("active-btn", view === "grid");
+      updateView();
+    }
+
+    // Show only current view section
+    function updateView() {
+      if (currentView === "list") {
+        listView.classList.add("active-view");
+        gridView.classList.remove("active-view");
+      } else {
+        listView.classList.remove("active-view");
+        gridView.classList.add("active-view");
+      }
+    }
+
+    // Open preview modal with PDF or APK info + QR code
+    function openPreview(item) {
+      previewTitle.textContent = item.name;
+      previewContent.innerHTML = "";
+
+      if (item.type === "pdf") {
+        const iframe = document.createElement("iframe");
+        iframe.src = item.url;
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.setAttribute("aria-label", `${item.name} PDF preview`);
+        previewContent.appendChild(iframe);
+      } else if (item.type === "apk") {
+        const info = document.createElement("p");
+        info.textContent = "APK file ready to download. Scan QR code or use the download button.";
+        previewContent.appendChild(info);
+      }
+
+      // Clear previous QR code and generate new
+      qrCodeDiv.innerHTML = "";
+      new QRCode(qrCodeDiv, {
+        text: item.url,
+        width: 128,
+        height: 128,
+        colorDark: "#0f9d58",
+        colorLight: "#eee",
+        correctLevel: QRCode.CorrectLevel.H,
+      });
+
+      previewModal.classList.add("active");
+      previewModal.focus();
+    }
+
+    // Close preview modal
+    function closePreview() {
+      previewModal.classList.remove("active");
+      previewContent.innerHTML = "";
+      qrCodeDiv.innerHTML = "";
+    }
+
+    // Close modal on Escape key
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && previewModal.classList.contains("active")) {
+        closePreview();
+      }
+    });
+  </script>
+</body>
 </html>
