@@ -1,208 +1,164 @@
-<!DOCTYPE html><html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MJ App Store</title>
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Store</title>
   <style>
     :root {
-      --bg-light: #fff;
-      --text-light: #000;
-      --bg-dark: #000;
-      --text-dark: #fff;
-      --accent-dark: #0f0;
-      --accent-light: #007bff;
-    }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--bg-light);
-      color: var(--text-light);
-      transition: 0.3s;
-    }
-    body.dark-mode {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
-    header, footer {
-      padding: 1rem;
-      text-align: center;
-      background-color: var(--accent-light);
-      color: white;
-    }
-    body.dark-mode header,
-    body.dark-mode footer {
-      background-color: var(--accent-dark);
-    }
-    .container {
-      padding: 1rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-    .card {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      border-radius: 10px;
-      background: #f9f9f9;
-    }
-    .dark-mode .card {
-      background: #121212;
-      border-color: #333;
-    }
-    .card h3 {
-      margin: 0.5rem 0;
-      font-size: 1.1rem;
-    }
-    .card p {
-      font-size: 0.9rem;
-      color: gray;
-    }
-    .dark-mode .card p {
-      color: #ccc;
-    }
-    .btn {
-      display: inline-block;
-      padding: 6px 12px;
-      background: var(--accent-light);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    .dark-mode .btn {
-      background: var(--accent-dark);
-    }
-    .toggle-container {
-      text-align: right;
-      margin: 0.5rem 1rem;
-    }
-    .toggle-button {
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      background: transparent;
-      border: 1px solid gray;
-      font-size: 0.9rem;
-    }
-    .dark-mode .toggle-button {
-      border-color: #0f0;
-      color: #0f0;
-    }
+      --primary-dark: #000000;
+      --accent-dark: #00ff00;
+      --primary-light: #ffffff;
+      --accent-light: #0066ff;
+    }body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: var(--primary-dark);
+  color: var(--primary-light);
+}
+
+header {
+  background-color: var(--accent-dark);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-mode {
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid var(--primary-light);
+  padding: 5px 10px;
+  color: var(--primary-light);
+  border-radius: 5px;
+}
+
+.container {
+  padding: 20px;
+}
+
+.app {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-dark);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.app-info {
+  display: flex;
+  align-items: center;
+}
+
+.app img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+.download-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--accent-dark);
+  color: var(--primary-dark);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+  }
+
+  header {
+    background-color: var(--accent-light);
+  }
+
+  .app {
+    border-color: var(--accent-light);
+  }
+
+  .download-btn {
+    background-color: var(--accent-light);
+    color: var(--primary-light);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .app {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .download-btn {
+    margin-top: 10px;
+  }
+}
+
   </style>
-</head>
-<body>
+</head><body>
   <header>
-    <h1>MJ App & PDF Store</h1>
-  </header>  <div class="toggle-container">
-    <button class="toggle-button" onclick="toggleDark()">Toggle Dark Mode</button>
-  </div>  <div class="container">
-    <!-- 20 Apps -->
-    <div class="card">
-      <h3>App 1 - NotepadX</h3>
-      <p>Lightweight notepad with autosave and dark mode.</p>
-      <a class="btn" href="apps/app1.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 2 - PDFVault</h3>
-      <p>Secure PDF manager and offline reader.</p>
-      <a class="btn" href="apps/app2.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 3 - SpeedCalc</h3>
-      <p>Quick calculator with history tracker.</p>
-      <a class="btn" href="apps/app3.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 4 - Daily Tasks</h3>
-      <p>Simple task list with reminders.</p>
-      <a class="btn" href="apps/app4.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 5 - MP3 Lite</h3>
-      <p>Minimal music player with folder browse.</p>
-      <a class="btn" href="apps/app5.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 6 - Flash Study</h3>
-      <p>Flashcard-based learning tool for students.</p>
-      <a class="btn" href="apps/app6.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 7 - HealthMate</h3>
-      <p>Track steps, calories, and water intake.</p>
-      <a class="btn" href="apps/app7.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 8 - FileDrop</h3>
-      <p>Share files offline via hotspot or QR.</p>
-      <a class="btn" href="apps/app8.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 9 - Focus Zen</h3>
-      <p>Pomo timer with ambient sound & stats.</p>
-      <a class="btn" href="apps/app9.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 10 - ExpenseNote</h3>
-      <p>Track daily spending with simple graphs.</p>
-      <a class="btn" href="apps/app10.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 11 - CryptoNow</h3>
-      <p>Live crypto prices and portfolio tracking.</p>
-      <a class="btn" href="apps/app11.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 12 - ZenQuotes</h3>
-      <p>Daily quotes for motivation and focus.</p>
-      <a class="btn" href="apps/app12.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 13 - ReaderLight</h3>
-      <p>Ebook reader with night mode and bookmarks.</p>
-      <a class="btn" href="apps/app13.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 14 - QRMagic</h3>
-      <p>Scan and generate QR codes instantly.</p>
-      <a class="btn" href="apps/app14.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 15 - WeatherPeek</h3>
-      <p>Minimal weather app with animated icons.</p>
-      <a class="btn" href="apps/app15.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 16 - TranslateX</h3>
-      <p>Quick translator with voice input.</p>
-      <a class="btn" href="apps/app16.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 17 - SafeBox</h3>
-      <p>Password manager with fingerprint lock.</p>
-      <a class="btn" href="apps/app17.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 18 - VidComp</h3>
-      <p>Light video compressor and cutter.</p>
-      <a class="btn" href="apps/app18.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 19 - NotesList</h3>
-      <p>Organize your thoughts quickly.</p>
-      <a class="btn" href="apps/app19.html">View</a>
-    </div>
-    <div class="card">
-      <h3>App 20 - CodeView</h3>
-      <p>Code reader and syntax highlighter.</p>
-      <a class="btn" href="apps/app20.html">View</a>
-    </div>
-  </div>  <footer>
-    <p>&copy; 2025 Docs by MJ</p>
-  </footer>  <script>
-    function toggleDark() {
-      document.body.classList.toggle('dark-mode');
+    <h1>App Store</h1>
+    <button class="toggle-mode" onclick="toggleTheme()">Toggle Theme</button>
+  </header>
+  <div class="container" id="app-list">
+    <!-- Apps will be inserted here by JS -->
+  </div>  <script>
+    const apps = [
+      { name: "App One", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Two", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Three", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Four", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Five", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Six", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Seven", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Eight", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Nine", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Ten", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Eleven", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Twelve", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Thirteen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Fourteen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Fifteen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Sixteen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Seventeen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Eighteen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Nineteen", img: "https://via.placeholder.com/60", link: "#" },
+      { name: "App Twenty", img: "https://via.placeholder.com/60", link: "#" }
+    ];
+
+    const appList = document.getElementById('app-list');
+    apps.forEach(app => {
+      const appCard = document.createElement('div');
+      appCard.className = 'app';
+      appCard.innerHTML = `
+        <div class="app-info">
+          <img src="${app.img}" alt="${app.name}" />
+          <div>
+            <h3>${app.name}</h3>
+          </div>
+        </div>
+        <a href="${app.link}" class="download-btn">Download</a>
+      `;
+      appList.appendChild(appCard);
+    });
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.body.style.backgroundColor = "var(--primary-dark)";
+        document.body.style.color = "var(--primary-light)";
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.body.style.backgroundColor = "var(--primary-light)";
+        document.body.style.color = "var(--primary-dark)";
+      }
     }
-  </script></body>
-</html>
+  </script></body></html>
