@@ -3,306 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - Modern Content Platform</title>
+    <title>StudyHub - Full Featured Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
-        /* Modern CSS Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Previous CSS styles from earlier version */
 
-        :root {
-            --primary: #2563eb;
-            --secondary: #4f46e5;
-            --background: #f8fafc;
-            --text: #1e293b;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        /* Header Styles */
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 1.5rem 2rem;
-            box-shadow: var(--shadow);
-            position: sticky;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
             top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: white;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .logo:hover {
-            opacity: 0.9;
-        }
-
-        /* Search Bar */
-        .search-container {
-            flex: 0 1 500px;
-            position: relative;
-        }
-
-        .search-input {
+            left: 0;
             width: 100%;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 2rem;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
         }
 
-        .search-input:focus {
-            outline: none;
+        .modal-content {
             background: white;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        }
-
-        /* Main Content Grid */
-        .main-container {
-            max-width: 1200px;
+            width: 90%;
+            max-width: 600px;
             margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .filter-section {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .filter-chip {
-            padding: 0.5rem 1.2rem;
-            border-radius: 2rem;
-            background: var(--card-bg);
-            border: 1px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        /* Content Card Design */
-        .content-card {
-            background: var(--card-bg);
+            padding: 2rem;
             border-radius: 1rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
         }
 
-        .content-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
-        .card-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 1rem 1rem 0 0;
+        /* QR Code Container */
+        .qr-container {
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
         }
 
-        .card-content {
-            padding: 1.5rem;
+        /* Login/Settings Form */
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        .form-input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
         }
 
-        .card-description {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-footer {
+        /* Settings Section */
+        .settings-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .card-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            color: #f59e0b;
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
         }
 
-        .download-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
             cursor: pointer;
-            transition: background 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ccc;
+            transition: .4s;
+            border-radius: 34px;
         }
 
-        .download-btn:hover {
-            background: #1d4ed8;
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: .4s;
+            border-radius: 50%;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
+        input:checked + .toggle-slider {
+            background: var(--primary);
+        }
 
-            .search-container {
-                width: 100%;
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <nav class="nav-container">
-            <a href="#" class="logo">StudyHub</a>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search courses, books, videos...">
-            </div>
-            <button class="download-btn">Login</button>
-        </nav>
-    </header>
+    <!-- Previous Header and Content -->
 
-    <main class="main-container">
-        <div class="filter-section">
-            <div class="filter-chip active">All</div>
-            <div class="filter-chip">Notes</div>
-            <div class="filter-chip">Books</div>
-            <div class="filter-chip">Videos</div>
+    <!-- Auth Modals -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login to StudyHub</h2>
+            <form class="auth-form" onsubmit="handleLogin(event)">
+                <input type="email" class="form-input" placeholder="Email" required>
+                <input type="password" class="form-input" placeholder="Password" required>
+                <button type="submit" class="download-btn">Login</button>
+            </form>
         </div>
+    </div>
 
-        <div class="content-grid">
-            <!-- Content Card 1 -->
-            <div class="content-card">
-                <img src="https://source.unsplash.com/random/800x600?notes" class="card-image" alt="Notes">
-                <div class="card-content">
-                    <h3 class="card-title">Advanced Physics Notes</h3>
-                    <p class="card-description">Complete guide to modern physics concepts with practice problems.</p>
-                    <div class="card-footer">
-                        <div class="card-rating">
-                            ★★★★☆ <span>(4.2)</span>
-                        </div>
-                        <button class="download-btn">
-                            <span>Download</span>
-                        </button>
-                    </div>
-                </div>
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-item">
+                <span>Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="toggle-slider"></span>
+                </label>
             </div>
-
-            <!-- Content Card 2 -->
-            <div class="content-card">
-                <img src="https://source.unsplash.com/random/800x600?books" class="card-image" alt="Book">
-                <div class="card-content">
-                    <h3 class="card-title">Mathematics Mastery</h3>
-                    <p class="card-description">Comprehensive guide to university-level mathematics.</p>
-                    <div class="card-footer">
-                        <div class="card-rating">
-                            ★★★★★ <span>(4.8)</span>
-                        </div>
-                        <button class="download-btn">
-                            <span>Download</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Card 3 -->
-            <div class="content-card">
-                <img src="https://source.unsplash.com/random/800x600?coding" class="card-image" alt="Video">
-                <div class="card-content">
-                    <h3 class="card-title">Web Development Crash Course</h3>
-                    <p class="card-description">Full-stack development tutorial series (10 hours).</p>
-                    <div class="card-footer">
-                        <div class="card-rating">
-                            ★★★★☆ <span>(4.5)</span>
-                        </div>
-                        <button class="download-btn">
-                            <span>Watch</span>
-                        </button>
-                    </div>
-                </div>
+            <div class="settings-item">
+                <span>Notifications</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationToggle">
+                    <span class="toggle-slider"></span>
+                </label>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('previewModal')">&times;</span>
+            <div id="previewContent"></div>
+            <div class="qr-container" id="qrCode"></div>
+        </div>
+    </div>
 
     <script>
-        // Interactive Features
-        const filterChips = document.querySelectorAll('.filter-chip');
-        const searchInput = document.querySelector('.search-input');
-        const contentCards = document.querySelectorAll('.content-card');
+        // Enhanced JavaScript
+        let currentUser = null;
 
-        // Filter Chip Functionality
-        filterChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                filterChips.forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                // Add filter logic here
+        // Login System
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = e.target.elements[0].value;
+            const password = e.target.elements[1].value;
+            
+            // Simulated login (In real app, use backend authentication)
+            currentUser = { email, preferences: {} };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            closeModal('loginModal');
+            updateAuthState();
+        }
+
+        function updateAuthState() {
+            const loginBtn = document.querySelector('.login-btn');
+            if(currentUser) {
+                loginBtn.textContent = 'Logout';
+                loginBtn.onclick = handleLogout;
+            } else {
+                loginBtn.textContent = 'Login';
+                loginBtn.onclick = () => openModal('loginModal');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateAuthState();
+        }
+
+        // Modal System
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Download with QR
+        function showPreview(content) {
+            openModal('previewModal');
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = `
+                <h3>${content.title}</h3>
+                <img src="${content.previewUrl}" class="card-image">
+                <p>${content.description}</p>
+                <button class="download-btn" onclick="handleDownload('${content.downloadUrl}')">
+                    Download Now
+                </button>
+            `;
+            
+            // Generate QR Code
+            new QRCode(document.getElementById("qrCode"), {
+                text: content.downloadUrl,
+                width: 128,
+                height: 128
+            });
+        }
+
+        // Enhanced Content Card Click
+        document.querySelectorAll('.content-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const content = {
+                    title: card.querySelector('.card-title').textContent,
+                    description: card.querySelector('.card-description').textContent,
+                    previewUrl: card.querySelector('.card-image').src,
+                    downloadUrl: '#real-download-url' // Replace with actual URL
+                };
+                showPreview(content);
             });
         });
 
-        // Search Functionality
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            contentCards.forEach(card => {
-                const title = card.querySelector('.card-title').textContent.toLowerCase();
-                card.style.display = title.includes(searchTerm) ? 'block' : 'none';
-            });
+        // Settings System
+        document.getElementById('darkModeToggle').addEventListener('change', (e) => {
+            document.body.classList.toggle('dark-mode', e.target.checked);
+            if(currentUser) {
+                currentUser.preferences.darkMode = e.target.checked;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
         });
 
-        // Download/View Button Handler
-        document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const contentType = btn.textContent.includes('Watch') ? 'video' : 'file';
-                alert(`In a full implementation, this would trigger ${contentType} download/view`);
-            });
-        });
+        // Initialize
+        function init() {
+            // Check existing session
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            updateAuthState();
+        }
+
+        init();
     </script>
 </body>
 </html>
