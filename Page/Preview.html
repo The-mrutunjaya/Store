@@ -3,153 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - Content Platform</title>
+    <title>StudyHub - Modern Content Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Basic CSS */
+        /* Modern CSS Reset */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #4f46e5;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
         }
 
+        /* Header Styles */
         .header {
-            background-color: #1a73e8;
-            padding: 1rem;
-            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .search-bar {
-            padding: 0.5rem;
-            width: 300px;
-            border-radius: 5px;
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo:hover {
+            opacity: 0.9;
+        }
+
+        /* Search Bar */
+        .search-container {
+            flex: 0 1 500px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.5rem;
             border: none;
+            border-radius: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Main Content Grid */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            padding: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
+        /* Content Card Design */
         .content-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
 
-        .content-card img {
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
             width: 100%;
-            height: 150px;
+            height: 200px;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #f59e0b;
         }
 
         .download-btn {
-            background: #1a73e8;
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
             cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-container {
+                width: 100%;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <h1>StudyHub</h1>
-        <input type="text" class="search-bar" placeholder="Search notes, books, videos...">
-        <button class="login-btn">Login</button>
+        <nav class="nav-container">
+            <a href="#" class="logo">StudyHub</a>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search courses, books, videos...">
+            </div>
+            <button class="download-btn">Login</button>
+        </nav>
     </header>
 
-    <div class="content-grid" id="contentGrid">
-        <!-- Content will be added dynamically -->
-    </div>
+    <main class="main-container">
+        <div class="filter-section">
+            <div class="filter-chip active">All</div>
+            <div class="filter-chip">Notes</div>
+            <div class="filter-chip">Books</div>
+            <div class="filter-chip">Videos</div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Content Card 1 -->
+            <div class="content-card">
+                <img src="https://source.unsplash.com/random/800x600?notes" class="card-image" alt="Notes">
+                <div class="card-content">
+                    <h3 class="card-title">Advanced Physics Notes</h3>
+                    <p class="card-description">Complete guide to modern physics concepts with practice problems.</p>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            ★★★★☆ <span>(4.2)</span>
+                        </div>
+                        <button class="download-btn">
+                            <span>Download</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Card 2 -->
+            <div class="content-card">
+                <img src="https://source.unsplash.com/random/800x600?books" class="card-image" alt="Book">
+                <div class="card-content">
+                    <h3 class="card-title">Mathematics Mastery</h3>
+                    <p class="card-description">Comprehensive guide to university-level mathematics.</p>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            ★★★★★ <span>(4.8)</span>
+                        </div>
+                        <button class="download-btn">
+                            <span>Download</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Card 3 -->
+            <div class="content-card">
+                <img src="https://source.unsplash.com/random/800x600?coding" class="card-image" alt="Video">
+                <div class="card-content">
+                    <h3 class="card-title">Web Development Crash Course</h3>
+                    <p class="card-description">Full-stack development tutorial series (10 hours).</p>
+                    <div class="card-footer">
+                        <div class="card-rating">
+                            ★★★★☆ <span>(4.5)</span>
+                        </div>
+                        <button class="download-btn">
+                            <span>Watch</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Sample content data
-        const contentItems = [
-            {
-                title: "Physics Notes",
-                type: "notes",
-                category: "Science",
-                downloads: "1.2k",
-                rating: 4.5,
-                previewUrl: "https://via.placeholder.com/150",
-                downloadUrl: "#"
-            },
-            {
-                title: "Maths Video Tutorial",
-                type: "video",
-                category: "Mathematics",
-                downloads: "2.4k",
-                rating: 4.8,
-                previewUrl: "https://via.placeholder.com/150",
-                downloadUrl: "#"
-            },
-            {
-                title: "History E-book",
-                type: "book",
-                category: "History",
-                downloads: "890",
-                rating: 4.2,
-                previewUrl: "https://via.placeholder.com/150",
-                downloadUrl: "#"
-            }
-        ];
+        // Interactive Features
+        const filterChips = document.querySelectorAll('.filter-chip');
+        const searchInput = document.querySelector('.search-input');
+        const contentCards = document.querySelectorAll('.content-card');
 
-        // Render content cards
-        function renderContent() {
-            const grid = document.getElementById('contentGrid');
-            grid.innerHTML = contentItems.map(item => `
-                <div class="content-card">
-                    <img src="${item.previewUrl}" alt="${item.title}">
-                    <h3>${item.title}</h3>
-                    <p>Type: ${item.type}</p>
-                    <p>Category: ${item.category}</p>
-                    <p>Downloads: ${item.downloads}</p>
-                    <p>Rating: ${item.rating}/5</p>
-                    <button class="download-btn" 
-                            onclick="handleDownload('${item.downloadUrl}')">
-                        Download
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        // Download handler
-        function handleDownload(url) {
-            // Add your download logic here
-            alert('Downloading: ' + url);
-        }
-
-        // Initial render
-        renderContent();
-
-        // Search functionality
-        document.querySelector('.search-bar').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filtered = contentItems.filter(item =>
-                item.title.toLowerCase().includes(searchTerm) ||
-                item.category.toLowerCase().includes(searchTerm)
-            );
-            renderFilteredContent(filtered);
+        // Filter Chip Functionality
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                filterChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                // Add filter logic here
+            });
         });
 
-        function renderFilteredContent(filteredItems) {
-            const grid = document.getElementById('contentGrid');
-            grid.innerHTML = filteredItems.map(item => `
-                <!-- Same card structure as renderContent() -->
-            `).join('');
-        }
+        // Search Functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            contentCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                card.style.display = title.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        // Download/View Button Handler
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const contentType = btn.textContent.includes('Watch') ? 'video' : 'file';
+                alert(`In a full implementation, this would trigger ${contentType} download/view`);
+            });
+        });
     </script>
 </body>
 </html>
