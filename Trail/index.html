@@ -1,90 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub Pro - Complete Learning Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>App-like Site</title>
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-    <div class="loading-screen">
-        <div class="loader"></div>
-    </div>
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
 
-    <div class="auth-modal hidden">
-        <div class="auth-content">
-            <h2>Welcome to StudyHub</h2>
-            <form id="loginForm">
-                <input type="email" id="loginEmail" placeholder="Email" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button type="submit">Login</button>
-            </form>
-            <button class="google-login">
-                <i class="fab fa-google"></i> Continue with Google
-            </button>
-            <p class="auth-toggle">New user? <a href="#" id="showRegister">Create account</a></p>
-        </div>
-    </div>
+  <div id="main-content" style="display: none;">
+    <header>
+      <h1>My App-Like Site</h1>
+    </header>
 
-    <div class="app-container hidden">
-        <header class="main-header">
-            <nav class="nav-container">
-                <div class="branding">
-                    <i class="fas fa-book-open logo-icon"></i>
-                    <h1>StudyHub Pro</h1>
-                </div>
-                
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" class="global-search" placeholder="Search resources...">
-                </div>
+    <section class="content">
+      <div class="card">
+        <h2>Download Now</h2>
+        <button onclick="downloadFile()">Download</button>
+      </div>
+    </section>
 
-                <div class="header-actions">
-                    <button class="icon-btn" id="themeToggle">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <button class="icon-btn" id="uploadBtn">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </button>
-                    <button class="icon-btn" id="userMenu">
-                        <i class="fas fa-user-circle"></i>
-                    </button>
-                </div>
-            </nav>
-        </header>
+    <footer>
+      <nav>
+        <button>Home</button>
+        <button>Explore</button>
+        <button>Profile</button>
+      </nav>
+    </footer>
+  </div>
 
-        <main class="content-grid-container"></main>
-
-        <div class="modal-overlay hidden" id="previewModal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <div class="preview-content"></div>
-                <div class="qr-container"></div>
-            </div>
-        </div>
-
-        <div class="modal-overlay hidden" id="uploadModal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2>Upload Content</h2>
-                <form id="uploadForm">
-                    <input type="file" id="contentFile" required>
-                    <input type="text" id="contentTitle" placeholder="Title" required>
-                    <textarea id="contentDescription" placeholder="Description"></textarea>
-                    <select id="contentType">
-                        <option value="notes">Notes</option>
-                        <option value="book">Book</option>
-                        <option value="video">Video</option>
-                    </select>
-                    <button type="submit">Upload</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <script src="app.js"></script>
+  <script src="assets/script.js"></script>
 </body>
 </html>
