@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyHub - Content Platform</title>
+    <style>
+        /* Basic CSS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background-color: #1a73e8;
+            padding: 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-bar {
+            padding: 0.5rem;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .content-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .download-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>StudyHub</h1>
+        <input type="text" class="search-bar" placeholder="Search notes, books, videos...">
+        <button class="login-btn">Login</button>
+    </header>
+
+    <div class="content-grid" id="contentGrid">
+        <!-- Content will be added dynamically -->
+    </div>
+
+    <script>
+        // Sample content data
+        const contentItems = [
+            {
+                title: "Physics Notes",
+                type: "notes",
+                category: "Science",
+                downloads: "1.2k",
+                rating: 4.5,
+                previewUrl: "https://via.placeholder.com/150",
+                downloadUrl: "#"
+            },
+            {
+                title: "Maths Video Tutorial",
+                type: "video",
+                category: "Mathematics",
+                downloads: "2.4k",
+                rating: 4.8,
+                previewUrl: "https://via.placeholder.com/150",
+                downloadUrl: "#"
+            },
+            {
+                title: "History E-book",
+                type: "book",
+                category: "History",
+                downloads: "890",
+                rating: 4.2,
+                previewUrl: "https://via.placeholder.com/150",
+                downloadUrl: "#"
+            }
+        ];
+
+        // Render content cards
+        function renderContent() {
+            const grid = document.getElementById('contentGrid');
+            grid.innerHTML = contentItems.map(item => `
+                <div class="content-card">
+                    <img src="${item.previewUrl}" alt="${item.title}">
+                    <h3>${item.title}</h3>
+                    <p>Type: ${item.type}</p>
+                    <p>Category: ${item.category}</p>
+                    <p>Downloads: ${item.downloads}</p>
+                    <p>Rating: ${item.rating}/5</p>
+                    <button class="download-btn" 
+                            onclick="handleDownload('${item.downloadUrl}')">
+                        Download
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Download handler
+        function handleDownload(url) {
+            // Add your download logic here
+            alert('Downloading: ' + url);
+        }
+
+        // Initial render
+        renderContent();
+
+        // Search functionality
+        document.querySelector('.search-bar').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = contentItems.filter(item =>
+                item.title.toLowerCase().includes(searchTerm) ||
+                item.category.toLowerCase().includes(searchTerm)
+            );
+            renderFilteredContent(filtered);
+        });
+
+        function renderFilteredContent(filteredItems) {
+            const grid = document.getElementById('contentGrid');
+            grid.innerHTML = filteredItems.map(item => `
+                <!-- Same card structure as renderContent() -->
+            `).join('');
+        }
+    </script>
+</body>
+</html>
